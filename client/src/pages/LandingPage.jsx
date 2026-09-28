@@ -345,23 +345,27 @@ const LandingPage = () => {
                 and never get double-booked.
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8">
+              {/* Action Buttons with Aura Effect */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 mb-8">
                 <Link
                   to="/register"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base transition-all duration-200 shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5"
+                  className="btn-aura-emerald group cursor-pointer"
                 >
-                  <Zap className="w-5 h-5 fill-white" />
-                  <span>Ride as Passenger</span>
-                  <ArrowRight className="w-4 h-4 ml-1" />
+                  <span className="btn-aura-inner text-base">
+                    <Zap className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-500 group-hover:scale-110 transition-transform" />
+                    <span>Ride as Passenger</span>
+                    <ArrowRight className="w-4 h-4 ml-1 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </Link>
 
                 <Link
                   to="/login"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-base transition-all duration-200 hover:-translate-y-0.5 shadow-sm"
+                  className="btn-aura-red group cursor-pointer"
                 >
-                  <Car className="w-5 h-5 text-red-500 dark:text-red-400" />
-                  <span>Driver Portal (Jashim)</span>
+                  <span className="btn-aura-inner text-base">
+                    <Car className="w-5 h-5 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />
+                    <span>Driver Portal (Jashim)</span>
+                  </span>
                 </Link>
               </div>
 
