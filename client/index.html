@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dhaka Tesla Pool</title>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <script>
+      (function() {
+        var t = localStorage.getItem('dhaka_tesla_theme') || 'light';
+        if (t === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

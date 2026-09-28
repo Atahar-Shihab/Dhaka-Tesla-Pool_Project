@@ -71,19 +71,19 @@ const PassengerDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pt-24 text-slate-800 dark:text-slate-100 transition-colors">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Welcome Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">Welcome back, {user?.name?.split(' ')[0] || 'Passenger'}!</h1>
-            <p className="text-gray-400 mt-1">Here's your ride summary today.</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {user?.name?.split(' ')[0] || 'Passenger'}!</h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-1">Here's your ride summary today.</p>
           </div>
           
           <Link 
-            to="/passenger/request" 
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-green-500/20"
+            to="/passenger/request-ride" 
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-all shadow-md shadow-emerald-500/20"
           >
             <PlusCircle className="w-5 h-5" />
             Request a Ride
@@ -93,40 +93,40 @@ const PassengerDashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Active Rides Card */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+              <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500 dark:text-blue-400">
                 <Clock className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-400">Active Rides</p>
-                <h3 className="text-2xl font-bold text-white">{stats.activeRides}</h3>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Active Rides</p>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{stats.activeRides}</h3>
               </div>
             </div>
           </div>
 
           {/* Completed Rides Card */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
+              <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
                 <Car className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-400">Completed Rides</p>
-                <h3 className="text-2xl font-bold text-white">{stats.completedRides}</h3>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Completed Rides</p>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{stats.completedRides}</h3>
               </div>
             </div>
           </div>
 
           {/* Total Spent Card */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400">
                 <CreditCard className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-400">Total Spent</p>
-                <h3 className="text-2xl font-bold text-white">{formatFare(stats.totalSpent)}</h3>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Spent</p>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{formatFare(stats.totalSpent)}</h3>
               </div>
             </div>
           </div>
@@ -135,42 +135,42 @@ const PassengerDashboard = () => {
         {/* Recent Rides Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white">Recent Rides</h2>
-            <Link to="/passenger/rides" className="text-green-400 hover:text-green-300 text-sm font-medium flex items-center">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Rides</h2>
+            <Link to="/passenger/rides" className="text-emerald-600 dark:text-emerald-400 hover:underline text-sm font-medium flex items-center">
               View all <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
           
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
             {recentRides.length > 0 ? (
-              <div className="divide-y divide-slate-800/50">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {recentRides.map((ride) => (
                   <Link 
                     key={ride.id} 
                     to={`/passenger/rides/${ride.id}`}
-                    className="block p-4 sm:p-6 hover:bg-slate-800/30 transition-colors"
+                    className="block p-4 sm:p-6 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                   >
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                       
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <StatusBadge status={ride.status} />
-                          <span className="text-xs text-gray-500">{formatDate(ride.createdAt)}</span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">{formatDate(ride.createdAt)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                          <span className="text-gray-300 font-medium">{ride.pickupLocation?.name || 'Unknown Pickup'}</span>
+                          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{ride.pickupLocation?.name || 'Unknown Pickup'}</span>
                         </div>
-                        <div className="w-0.5 h-3 bg-slate-700 ml-1 my-1"></div>
+                        <div className="w-0.5 h-3 bg-slate-300 dark:bg-slate-700 ml-1 my-1"></div>
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                          <span className="text-gray-300 font-medium">{ride.dropoffLocation?.name || 'Unknown Dropoff'}</span>
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{ride.dropoffLocation?.name || 'Unknown Dropoff'}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
-                        <span className="text-lg font-bold text-white">{formatFare(ride.fare)}</span>
-                        <div className="text-gray-500 flex items-center">
+                        <span className="text-lg font-bold text-slate-900 dark:text-white">{formatFare(ride.fare)}</span>
+                        <div className="text-slate-500 dark:text-slate-400 flex items-center text-xs">
                           Details <ChevronRight className="w-4 h-4 ml-1" />
                         </div>
                       </div>
@@ -181,11 +181,11 @@ const PassengerDashboard = () => {
               </div>
             ) : (
               <div className="p-8 text-center">
-                <Car className="w-12 h-12 text-slate-700 mx-auto mb-3" />
-                <p className="text-gray-400 mb-4">No recent rides found.</p>
+                <Car className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-600 dark:text-slate-400 mb-4">No recent rides found.</p>
                 <Link 
-                  to="/passenger/request"
-                  className="inline-block px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                  to="/passenger/request-ride"
+                  className="inline-block px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors text-sm font-semibold"
                 >
                   Request your first ride
                 </Link>

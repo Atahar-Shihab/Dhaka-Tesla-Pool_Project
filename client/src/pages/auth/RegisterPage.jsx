@@ -56,67 +56,67 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 py-12 transition-colors">
       <div className="w-full max-w-md">
-        {/* Dark Card Container */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
+        {/* Card Container */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-xl dark:shadow-2xl">
           
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-            <p className="text-gray-400">Join the Tesla Pool community</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Create Account</h1>
+            <p className="text-slate-600 dark:text-slate-400">Join the Tesla Pool community</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="Enter your name"
               />
             </div>
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="Enter your email"
               />
             </div>
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="Create a password"
               />
             </div>
 
             {/* Role Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">I want to sign up as a:</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">I want to sign up as a:</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => handleRoleChange('PASSENGER')}
-                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-colors ${
+                  className={`py-3 px-4 rounded-lg border text-sm font-semibold transition-colors ${
                     formData.role === 'PASSENGER'
-                      ? 'bg-green-500/10 border-green-500 text-green-400'
-                      : 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-slate-700/50'
+                      ? 'bg-emerald-500/15 border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'
                   }`}
                 >
                   Passenger
@@ -124,13 +124,13 @@ const RegisterPage = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleChange('DRIVER')}
-                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-colors ${
+                  className={`py-3 px-4 rounded-lg border text-sm font-semibold transition-colors ${
                     formData.role === 'DRIVER'
-                      ? 'bg-blue-500/10 border-blue-500 text-blue-400'
-                      : 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-slate-700/50'
+                      ? 'bg-red-500/15 border-red-500 text-red-600 dark:text-red-400'
+                      : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'
                   }`}
                 >
-                  Driver
+                  Driver (Rickshaw)
                 </button>
               </div>
             </div>
@@ -139,11 +139,7 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex items-center justify-center gap-2 py-3 px-4 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                formData.role === 'PASSENGER' 
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500'
-                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500'
-              }`}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -158,11 +154,11 @@ const RegisterPage = () => {
 
           {/* Login Link */}
           <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
               Already have an account?{' '}
               <button 
                 onClick={() => navigate('/login')}
-                className="text-green-400 hover:text-green-300 font-medium transition-colors"
+                className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium transition-colors"
               >
                 Sign in here
               </button>
