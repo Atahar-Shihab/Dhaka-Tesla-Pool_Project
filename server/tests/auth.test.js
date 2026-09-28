@@ -3,7 +3,7 @@ process.env.JWT_SECRET = 'dhaka-tesla-pool-secret-key-2026';
 process.env.JWT_EXPIRES_IN = '7d';
 process.env.PORT = '0';
 
-const { describe, it, expect, beforeAll, afterAll } = require('vitest');
+// vitest globals (describe, it, expect, etc.) are auto-injected via vitest.config.mjs
 const request = require('supertest');
 const { app, prisma } = require('./setup');
 
@@ -28,7 +28,7 @@ describe('Auth Endpoints', () => {
       
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.email).toBe(testUser.email);
+    expect(res.body.user.email).toBe(testUser.email);
     expect(res.body.token).toBeDefined();
   });
 
@@ -70,7 +70,7 @@ describe('Auth Endpoints', () => {
 
     expect(meRes.status).toBe(200);
     expect(meRes.body.success).toBe(true);
-    expect(meRes.body.data.email).toBe(testUser.email);
+    expect(meRes.body.user.email).toBe(testUser.email);
   });
 
   it('GET /api/auth/me rejects invalid token', async () => {

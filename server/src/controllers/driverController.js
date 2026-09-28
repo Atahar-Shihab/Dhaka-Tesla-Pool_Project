@@ -218,11 +218,13 @@ const startTrip = async (req, res, next) => {
         data: { status: 'IN_PROGRESS' }
       });
 
-      // 2. Also ensure the pool is marked as in progress
-      await tx.pool.update({
-        where: { id: ride.poolId },
-        data: { status: 'IN_PROGRESS' }
-      });
+      // 2. Also ensure the pool is marked as in progress (if poolId exists)
+      if (ride.poolId) {
+        await tx.pool.update({
+          where: { id: ride.poolId },
+          data: { status: 'IN_PROGRESS' }
+        });
+      }
     });
 
     res.status(200).json({ success: true, message: 'Trip started!' });
