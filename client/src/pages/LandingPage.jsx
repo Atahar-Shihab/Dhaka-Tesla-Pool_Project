@@ -52,6 +52,9 @@ const LandingPage = () => {
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState(null);
 
+  // Hero Media Mode: 'video' | 'photo' (default to video of the moving car)
+  const [mediaMode, setMediaMode] = useState('video');
+
   // Predefined Dhaka zones with approx distance in km from Banani
   const zoneDistances = {
     'Banani-Mohakhali': 2.5,
@@ -223,20 +226,63 @@ const LandingPage = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-          {/* RICKSHAW GRAPHIC CARD */}
+          {/* RICKSHAW GRAPHIC & MOVING VIDEO CARD */}
           <div ref={teslaRef} className="mb-10 relative inline-block max-w-2xl mx-auto px-4">
             {/* Pulsing neon aura */}
             <div className="absolute -inset-3 bg-gradient-to-r from-red-600 via-amber-500 to-cyan-500 rounded-3xl blur-2xl opacity-40 animate-pulse pointer-events-none" />
 
             <div className="relative rounded-2xl overflow-hidden border-2 border-red-500/70 shadow-[0_0_60px_rgba(239,68,68,0.35)] bg-slate-900/90 backdrop-blur-md">
-              <img
-                src="/tesla-bullet-rickshaw.jpg"
-                alt="Dhaka Battery Tesla Rickshaw Bullet"
-                className="w-full h-auto max-h-[380px] object-cover rounded-xl"
-              />
+              
+              {/* Media Mode Switcher (Video vs Photo) */}
+              <div className="absolute top-3 right-3 z-30 flex items-center bg-slate-950/85 backdrop-blur-md rounded-xl p-1 border border-slate-700/80 shadow-lg">
+                <button
+                  onClick={() => setMediaMode('video')}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    mediaMode === 'video'
+                      ? 'bg-red-600 text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <span>▶</span> Live Motion Video
+                </button>
+                <button
+                  onClick={() => setMediaMode('photo')}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    mediaMode === 'photo'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <span>📸</span> Tesla Rickshaw
+                </button>
+              </div>
+
+              {/* Video Player or High-Res Image */}
+              {mediaMode === 'video' ? (
+                <div className="relative">
+                  <video
+                    src="/moving-car.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto max-h-[380px] object-cover rounded-xl"
+                  />
+                  <div className="absolute top-3 left-3 bg-red-600/90 text-white text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow">
+                    <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                    LIVE MOTION
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src="/tesla-bullet-rickshaw.jpg"
+                  alt="Dhaka Battery Tesla Rickshaw Bullet"
+                  className="w-full h-auto max-h-[380px] object-cover rounded-xl"
+                />
+              )}
 
               {/* Floating Vehicle Specs Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-red-500/40">
+              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-red-500/40 z-20">
                 <div className="flex items-center gap-2">
                   <span className="flex h-3 w-3 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -246,7 +292,7 @@ const LandingPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-red-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-red-950/70 border border-red-700/60">
-                    🛺 3-WHEELER
+                    {mediaMode === 'video' ? '🎬 LIVE SPEED DEMO' : '🛺 3-WHEELER'}
                   </span>
                   <span className="text-cyan-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-700/60">
                     ⚡ 3 SEATS • 100% ELECTRIC
@@ -682,14 +728,23 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Spec visual card */}
+            {/* Spec visual card with Video in motion */}
             <div className="relative bg-slate-900 border border-red-500/30 rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl pointer-events-none" />
-              <img
-                src="/tesla-bullet-rickshaw.jpg"
-                alt="Bullet Architecture"
-                className="w-full h-auto rounded-2xl object-cover mb-6 border border-slate-800"
-              />
+              <div className="relative rounded-2xl overflow-hidden mb-6 border border-slate-800 shadow-xl">
+                <video
+                  src="/moving-car.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto max-h-[300px] object-cover"
+                />
+                <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs font-mono text-cyan-400 font-bold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                  BULLET IN MOTION — ROAD 11
+                </div>
+              </div>
               <div className="flex items-center justify-between text-xs font-mono text-gray-400 pt-2 border-t border-slate-800">
                 <span>VEHICLE IDENTIFIER: BULLET-01</span>
                 <span className="text-emerald-400 font-bold">STATUS: FLIGHT READY</span>
