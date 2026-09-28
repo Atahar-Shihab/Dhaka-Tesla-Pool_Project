@@ -17,7 +17,8 @@ const AvailableRequests = () => {
     const fetchRequests = async () => {
       try {
         const res = await api.get('/driver/requests');
-        setRequests(res.data);
+        const rawReqs = res.data?.data || res.data;
+        setRequests(Array.isArray(rawReqs) ? rawReqs : []);
       } catch (error) {
         toast.error('Failed to load ride requests');
       } finally {
@@ -37,8 +38,8 @@ const AvailableRequests = () => {
       const res = await api.post(`/driver/accept/${rideId}`);
       toast.success('Ride accepted successfully!');
       
-      // The response should include the pool ID
-      const poolId = res.data.poolId || res.data.id; 
+      const payload = res.data?.data || res.data;
+      const poolId = payload?.poolId || payload?.id; 
       if (poolId) {
         navigate(`/driver/pool/${poolId}`);
       } else {
@@ -93,7 +94,7 @@ const AvailableRequests = () => {
                   </div>
                   <div className="flex items-center gap-1 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
                     <Users className="w-4 h-4 text-gray-400" />
-                    <span className="text-white text-sm font-medium">{request.seats}</span>
+                    <span className="text-white text-sm font-medium">{request.seatsNeeded ?? request.seats ?? 1} Seat{(request.seatsNeeded ?? request.seats ?? 1) > 1 ? 's' : ''}</span>
                   </div>
                 </div>
 
@@ -122,7 +123,7 @@ const AvailableRequests = () => {
                 <div className="border-t border-slate-800 pt-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-500">Estimated Fare</p>
-                    <p className="text-xl font-bold text-green-400">{formatFare(request.fare)}</p>
+                    <p className="text-xl font-bold text-green-400">{formatFare(request.fareAmount ?? request.fare)}</p>
                   </div>
                   
                   <button

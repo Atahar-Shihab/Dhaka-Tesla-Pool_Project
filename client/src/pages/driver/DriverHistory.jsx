@@ -14,8 +14,9 @@ const DriverHistory = () => {
     const fetchHistory = async () => {
       try {
         const res = await api.get('/driver/history');
-        // Sort descending
-        const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const rawPools = res.data?.data || res.data;
+        const poolsList = Array.isArray(rawPools) ? rawPools : [];
+        const sorted = [...poolsList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPools(sorted);
       } catch (error) {
         toast.error('Failed to load history');
@@ -44,8 +45,9 @@ const DriverHistory = () => {
           <div className="space-y-6">
             {pools.map((pool) => {
               // Calculate total earnings and seats for this pool
-              const totalEarned = pool.rides?.reduce((sum, ride) => sum + (Number(ride.fare) || 0), 0) || 0;
-              const totalPassengers = pool.rides?.length || 0;
+              const rides = pool.rideRequests || pool.rides || [];
+              const totalEarned = rides.reduce((sum, ride) => sum + (Number(ride.fareAmount || ride.fare) || 0), 0);
+              const totalPassengers = rides.length;
 
               return (
                 <div key={pool.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
@@ -72,12 +74,12 @@ const DriverHistory = () => {
 
                   {/* Pool Rides */}
                   <div className="p-5 divide-y divide-slate-800/50">
-                    {pool.rides?.map(ride => (
+                    {rides.map(ride => (
                       <div key={ride.id} className="py-4 first:pt-0 last:pb-0 flex flex-col md:flex-row justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="font-medium text-white">{ride.passenger?.name || 'Passenger'}</span>
-                            <span className="text-gray-500 text-sm">• {ride.seats} Seat{ride.seats > 1 ? 's' : ''}</span>
+                            <span className="text-gray-500 text-sm">• {ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</span>
                             <span className="ml-2 scale-75 origin-left"><StatusBadge status={ride.status} /></span>
                           </div>
                           
@@ -89,12 +91,12 @@ const DriverHistory = () => {
                         </div>
                         
                         <div className="text-right flex items-center md:items-start">
-                          <span className="text-gray-300 font-medium">{formatFare(ride.fare)}</span>
+                          <span className="text-gray-300 font-medium">{formatFare(ride.fareAmount ?? ride.fare)}</span>
                         </div>
                       </div>
                     ))}
                     
-                    {(!pool.rides || pool.rides.length === 0) && (
+                    {rides.length === 0 && (
                       <p className="text-gray-500 text-sm py-2">No completed rides in this pool.</p>
                     )}
                   </div>

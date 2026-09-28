@@ -17,7 +17,9 @@ const MyRides = () => {
       try {
         const res = await api.get('/rides/my');
         // Sort descending by date
-        const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const rawRides = res.data?.data || res.data;
+        const ridesList = Array.isArray(rawRides) ? rawRides : [];
+        const sorted = [...ridesList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setRides(sorted);
       } catch (error) {
         toast.error('Failed to load ride history');
@@ -96,7 +98,7 @@ const MyRides = () => {
                   
                   {/* Fare & Chevron */}
                   <div className="flex md:flex-col items-center md:items-end justify-between border-t border-slate-800 md:border-0 pt-4 md:pt-0 mt-2 md:mt-0">
-                    <div className="text-xl font-bold text-white mb-2">{formatFare(ride.fare)}</div>
+                    <div className="text-xl font-bold text-white mb-2">{formatFare(ride.fareAmount ?? ride.fare)}</div>
                     <div className="text-gray-500 flex items-center text-sm group-hover:text-green-400">
                       View details <ChevronRight className="w-4 h-4 ml-1" />
                     </div>
