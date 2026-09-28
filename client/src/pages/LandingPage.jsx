@@ -268,7 +268,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-[#090d16] text-slate-800 dark:text-slate-100 min-h-screen font-sans selection:bg-emerald-500/20 selection:text-emerald-700 transition-colors duration-200">
+    <div className={`${isDark ? 'bg-[#090d16] text-slate-100' : 'bg-slate-50 text-slate-800'} min-h-screen font-sans selection:bg-emerald-500/20 selection:text-emerald-700 transition-colors duration-200`}>
 
       {/* ========================================================= */}
       {/* 1. TOP STATUS PILL (LIGHT & DARK COMPLIANT)               */}
