@@ -1,152 +1,199 @@
-/**
- * PassengerDashboard.jsx
- * Dashboard for passengers to view stats and recent rides.
- */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import { Car, CheckCircle, DollarSign, Clock, ArrowRight } from 'lucide-react';
-import StatusBadge from '../../components/StatusBadge';
 import { formatFare, formatDate } from '../../utils/helpers';
+import StatusBadge from '../../components/StatusBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { Car, Clock, CreditCard, ChevronRight, PlusCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const PassengerDashboard = () => {
   const { user } = useAuth();
-  const [rides, setRides] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ active: 0, completed: 0, spent: 0 });
+  const [stats, setStats] = useState({
+    activeRides: 0,
+    completedRides: 0,
+    totalSpent: 0,
+  });
+  const [recentRides, setRecentRides] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch passenger data
   useEffect(() => {
-    const fetchRides = async () => {
+    const fetchDashboardData = async () => {
       try {
+        setIsLoading(true);
+        // Fetch all rides for this passenger
         const response = await api.get('/rides/my');
-        const data = response.data;
-        setRides(data);
-
-        // Calculate stats
-        let active = 0;
-        let completed = 0;
-        let spent = 0;
-
-        data.forEach(ride => {
-          if (['REQUESTED', 'MATCHED', 'DRIVER_ARRIVED', 'IN_PROGRESS'].includes(ride.status)) {
-            active++;
-          } else if (ride.status === 'COMPLETED') {
-            completed++;
-            spent += ride.fare;
-          }
+        const rides = response.data || [];
+        
+        // Calculate basic stats
+        const activeCount = rides.filter(r => 
+          ['REQUESTED', 'MATCHED', 'DRIVER_ARRIVED', 'IN_PROGRESS'].includes(r.status)
+        ).length;
+        
+        const completedCount = rides.filter(r => r.status === 'COMPLETED').length;
+        
+        const spent = rides
+          .filter(r => r.status === 'COMPLETED')
+          .reduce((sum, ride) => sum + (Number(ride.fare) || 0), 0);
+          
+        setStats({
+          activeRides: activeCount,
+          completedRides: completedCount,
+          totalSpent: spent
         });
 
-        setStats({ active, completed, spent });
-      } catch (error) {
-        console.error("Failed to fetch rides", error);
+        // Get top 5 recent rides
+        const sortedRides = [...rides].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setRecentRides(sortedRides.slice(0, 5));
+        
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+        setError("Failed to load dashboard data");
+        toast.error("Could not fetch latest data");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchRides();
+    fetchDashboardData();
   }, []);
 
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
+  
+  if (error) return (
+    <div className="pt-20 p-6 text-center text-red-400 bg-slate-900 border border-slate-800 rounded-2xl mx-4 my-8">
+      <p>{error}</p>
+      <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-slate-800 rounded text-white">Retry</button>
+    </div>
+  );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome, {user.name}! 👋</h1>
-        <p className="text-gray-600 mt-1">Here is an overview of your rides.</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center">
-          <div className="bg-blue-100 p-4 rounded-lg mr-4">
-            <Clock className="h-6 w-6 text-blue-600" />
-          </div>
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-6xl mx-auto space-y-8">
+        
+        {/* Welcome Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <p className="text-sm font-medium text-gray-500">Active Rides</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+            <h1 className="text-3xl font-bold text-white">Welcome back, {user?.name?.split(' ')[0] || 'Passenger'}!</h1>
+            <p className="text-gray-400 mt-1">Here's your ride summary today.</p>
           </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center">
-          <div className="bg-green-100 p-4 rounded-lg mr-4">
-            <CheckCircle className="h-6 w-6 text-green-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">Completed Rides</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center">
-          <div className="bg-purple-100 p-4 rounded-lg mr-4">
-            <DollarSign className="h-6 w-6 text-purple-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">Total Spent</p>
-            <p className="text-2xl font-bold text-gray-900">{formatFare(stats.spent)}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Actions & Recent Rides */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-fit">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-4">
-            <Link to="/passenger/request-ride" className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 shadow-sm">
-              <Car className="mr-2 h-5 w-5" />
-              Request a Ride
-            </Link>
-            <Link to="/passenger/rides" className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm">
-              View All Rides
-            </Link>
-          </div>
+          
+          <Link 
+            to="/passenger/request" 
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-green-500/20"
+          >
+            <PlusCircle className="w-5 h-5" />
+            Request a Ride
+          </Link>
         </div>
 
-        {/* Recent Rides List */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Rides</h2>
-            <Link to="/passenger/rides" className="text-sm text-primary-600 hover:text-primary-700 flex items-center">
-              See all <ArrowRight size={16} className="ml-1" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Active Rides Card */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-400">Active Rides</p>
+                <h3 className="text-2xl font-bold text-white">{stats.activeRides}</h3>
+              </div>
+            </div>
+          </div>
+
+          {/* Completed Rides Card */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
+                <Car className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-400">Completed Rides</p>
+                <h3 className="text-2xl font-bold text-white">{stats.completedRides}</h3>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Spent Card */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                <CreditCard className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-400">Total Spent</p>
+                <h3 className="text-2xl font-bold text-white">{formatFare(stats.totalSpent)}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Rides Section */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-white">Recent Rides</h2>
+            <Link to="/passenger/rides" className="text-green-400 hover:text-green-300 text-sm font-medium flex items-center">
+              View all <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
           
-          {rides.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              <Car className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-              <p>You haven't requested any rides yet.</p>
-              <Link to="/passenger/request-ride" className="text-primary-600 font-medium mt-2 inline-block">Request your first ride!</Link>
-            </div>
-          ) : (
-            <ul className="divide-y divide-gray-100">
-              {rides.slice(0, 5).map((ride) => (
-                <li key={ride.id}>
-                  <Link to={`/passenger/rides/${ride.id}`} className="block hover:bg-gray-50 transition-colors">
-                    <div className="px-6 py-4 flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <div className="flex items-center space-x-2 text-sm font-medium text-gray-900 mb-1">
-                          <span>{ride.pickupLocation?.name}</span>
-                          <ArrowRight size={14} className="text-gray-400" />
-                          <span>{ride.destinationLocation?.name}</span>
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+            {recentRides.length > 0 ? (
+              <div className="divide-y divide-slate-800/50">
+                {recentRides.map((ride) => (
+                  <Link 
+                    key={ride.id} 
+                    to={`/passenger/rides/${ride.id}`}
+                    className="block p-4 sm:p-6 hover:bg-slate-800/30 transition-colors"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <StatusBadge status={ride.status} />
+                          <span className="text-xs text-gray-500">{formatDate(ride.createdAt)}</span>
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {formatDate(ride.createdAt)} • {ride.seatsNeeded} seat(s)
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                          <span className="text-gray-300 font-medium">{ride.pickupLocation?.name || 'Unknown Pickup'}</span>
+                        </div>
+                        <div className="w-0.5 h-3 bg-slate-700 ml-1 my-1"></div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                          <span className="text-gray-300 font-medium">{ride.dropoffLocation?.name || 'Unknown Dropoff'}</span>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
-                        <StatusBadge status={ride.status} />
-                        <span className="text-sm font-semibold mt-2">{formatFare(ride.fare)}</span>
+                      
+                      <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
+                        <span className="text-lg font-bold text-white">{formatFare(ride.fare)}</span>
+                        <div className="text-gray-500 flex items-center">
+                          Details <ChevronRight className="w-4 h-4 ml-1" />
+                        </div>
                       </div>
+                      
                     </div>
                   </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center">
+                <Car className="w-12 h-12 text-slate-700 mx-auto mb-3" />
+                <p className="text-gray-400 mb-4">No recent rides found.</p>
+                <Link 
+                  to="/passenger/request"
+                  className="inline-block px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                >
+                  Request your first ride
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
+
       </div>
     </div>
   );

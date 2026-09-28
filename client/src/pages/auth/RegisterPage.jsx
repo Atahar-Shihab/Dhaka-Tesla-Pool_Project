@@ -1,149 +1,174 @@
-/**
- * RegisterPage.jsx
- * Allows new users to create an account as a passenger or driver.
- */
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { UserPlus } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { register } = useAuth();
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     role: 'PASSENGER' // Default role
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Handle input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
   };
 
+  // Handle role selection (radio buttons)
+  const handleRoleChange = (role) => {
+    setFormData(prev => ({ ...prev, role }));
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!formData.name || !formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
     try {
+      setIsLoading(true);
       const user = await register(formData.name, formData.email, formData.password, formData.role);
+      toast.success('Registration successful!');
+      
       // Redirect based on role
       if (user.role === 'DRIVER') {
-        navigate('/driver/dashboard');
+        navigate('/driver');
       } else {
-        navigate('/passenger/dashboard');
+        navigate('/passenger');
       }
     } catch (error) {
-      // Error is handled by context
+      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md border border-gray-100">
-        <div>
-          <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-            Create an Account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Join Dhaka Tesla Pool today
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Dark Card Container */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
+          
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
+            <p className="text-gray-400">Join the Tesla Pool community</p>
+          </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Full Name Input */}
             <div>
-              <label htmlFor="name" className="sr-only">Full Name</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
               <input
-                id="name"
-                name="name"
                 type="text"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                placeholder="Full Name"
+                name="name"
                 value={formData.name}
                 onChange={handleChange}
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                placeholder="Enter your name"
               />
             </div>
+
+            {/* Email Input */}
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
               <input
-                id="email"
-                name="email"
                 type="email"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                placeholder="Email address"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                placeholder="Enter your email"
               />
             </div>
+
+            {/* Password Input */}
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
               <input
-                id="password"
-                name="password"
                 type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                placeholder="Password (min. 6 characters)"
+                name="password"
                 value={formData.password}
                 onChange={handleChange}
-                minLength={6}
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors"
+                placeholder="Create a password"
               />
             </div>
 
             {/* Role Selection */}
-            <div className="pt-2">
-              <p className="text-sm font-medium text-gray-700 mb-2">I want to:</p>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="PASSENGER"
-                    checked={formData.role === 'PASSENGER'}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Ride (Passenger)</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="DRIVER"
-                    checked={formData.role === 'DRIVER'}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-tesla-600 focus:ring-tesla-500 border-gray-300"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Drive (Driver)</span>
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">I want to sign up as a:</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('PASSENGER')}
+                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-colors ${
+                    formData.role === 'PASSENGER'
+                      ? 'bg-green-500/10 border-green-500 text-green-400'
+                      : 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-slate-700/50'
+                  }`}
+                >
+                  Passenger
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('DRIVER')}
+                  className={`py-3 px-4 rounded-lg border text-sm font-medium transition-colors ${
+                    formData.role === 'DRIVER'
+                      ? 'bg-blue-500/10 border-blue-500 text-blue-400'
+                      : 'bg-slate-800 border-slate-700 text-gray-400 hover:bg-slate-700/50'
+                  }`}
+                >
+                  Driver
+                </button>
               </div>
             </div>
-          </div>
 
-          <div>
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${formData.role === 'DRIVER' ? 'bg-tesla-600 hover:bg-tesla-700 focus:ring-tesla-500' : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'} focus:outline-none focus:ring-2 focus:ring-offset-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+              disabled={isLoading}
+              className={`w-full flex items-center justify-center gap-2 py-3 px-4 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                formData.role === 'PASSENGER' 
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500'
+                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500'
+              }`}
             >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <UserPlus className={`h-5 w-5 ${formData.role === 'DRIVER' ? 'text-tesla-500 group-hover:text-tesla-400' : 'text-primary-500 group-hover:text-primary-400'}`} />
-              </span>
-              {isSubmitting ? 'Registering...' : 'Register'}
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <UserPlus className="w-5 h-5" />
+                  Create Account
+                </>
+              )}
             </button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              Already have an account?{' '}
+              <button 
+                onClick={() => navigate('/login')}
+                className="text-green-400 hover:text-green-300 font-medium transition-colors"
+              >
+                Sign in here
+              </button>
+            </p>
           </div>
-        </form>
-        
-        <div className="text-center mt-4">
-          <span className="text-sm text-gray-600">Already have an account? </span>
-          <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
-            Sign in here
-          </Link>
+
         </div>
       </div>
     </div>

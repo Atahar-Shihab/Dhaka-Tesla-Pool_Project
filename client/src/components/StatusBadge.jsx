@@ -1,21 +1,23 @@
-/**
- * StatusBadge.jsx
- * A reusable component to display ride/pool statuses with different colors.
- */
 import React from 'react';
-import { getStatusColor } from '../utils/helpers';
 
 const StatusBadge = ({ status }) => {
-  const colorClass = getStatusColor(status);
-  
-  // Format the status string for display (e.g., DRIVER_ARRIVED -> Driver Arrived)
-  const displayStatus = status
-    ? status.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase())
-    : 'Unknown';
+  // Define styles for each status to pop on dark backgrounds
+  const styles = {
+    REQUESTED: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    MATCHED: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    DRIVER_ARRIVED: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    IN_PROGRESS: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+    COMPLETED: 'bg-green-500/10 text-green-400 border-green-500/20',
+    CANCELLED: 'bg-red-500/10 text-red-400 border-red-500/20',
+    OPEN: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    DEFAULT: 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+  };
+
+  const badgeStyle = styles[status] || styles.DEFAULT;
 
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
-      {displayStatus}
+    <span className={`border rounded-full px-3 py-1 text-xs font-mono tracking-wider ${badgeStyle}`}>
+      {status ? status.replace('_', ' ') : 'UNKNOWN'}
     </span>
   );
 };
