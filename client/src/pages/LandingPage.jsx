@@ -34,6 +34,7 @@ import {
   Lock
 } from 'lucide-react';
 import gsap from 'gsap';
+import { toast } from 'react-toastify';
 
 const LandingPage = () => {
   // GSAP animation refs
@@ -52,8 +53,34 @@ const LandingPage = () => {
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState(null);
 
-  // Hero Media Mode: 'video' | 'photo' (default to video of the moving car)
-  const [mediaMode, setMediaMode] = useState('video');
+  // Turbo boost state for moving rickshaw
+  const [isTurbo, setIsTurbo] = useState(false);
+
+  // Toggle Turbo speed with rich Toastify notification
+  const handleToggleTurbo = () => {
+    setIsTurbo((prev) => {
+      const next = !prev;
+      if (next) {
+        toast.success('🚀 TURBO ENGAGED! Jashim stepped on the battery — Bullet accelerating to 85 km/h!', {
+          icon: '⚡',
+          theme: 'dark',
+        });
+      } else {
+        toast.info('Cruising at eco speed: 35 km/h through Banani Road 11.', {
+          icon: '🛺',
+          theme: 'dark',
+        });
+      }
+      return next;
+    });
+  };
+
+  const handleSimulateFare = () => {
+    toast.success(`🎫 Fare calculated for ${pickup} ➔ ${dropoff}: ৳${totalFare}.00 (${isPooled ? '20% pool discount included' : 'solo ride'})!`, {
+      icon: '💰',
+      theme: 'dark',
+    });
+  };
 
   // Predefined Dhaka zones with approx distance in km from Banani
   const zoneDistances = {
@@ -226,77 +253,120 @@ const LandingPage = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-          {/* RICKSHAW GRAPHIC & MOVING VIDEO CARD */}
-          <div ref={teslaRef} className="mb-10 relative inline-block max-w-2xl mx-auto px-4">
-            {/* Pulsing neon aura */}
-            <div className="absolute -inset-3 bg-gradient-to-r from-red-600 via-amber-500 to-cyan-500 rounded-3xl blur-2xl opacity-40 animate-pulse pointer-events-none" />
+          {/* ======================================================== */}
+          {/* DYNAMIC CYBER-EXPRESSWAY: MOVING TESLA RICKSHAW STAGE   */}
+          {/* ======================================================== */}
+          <div ref={teslaRef} className="mb-12 relative w-full max-w-3xl mx-auto px-2 sm:px-4">
+            {/* Multi-layered Neon Ambient Glow */}
+            <div className={`absolute -inset-4 bg-gradient-to-r ${isTurbo ? 'from-red-600 via-amber-500 to-cyan-400 opacity-60' : 'from-red-600/40 via-emerald-500/30 to-cyan-500/40 opacity-40'} rounded-3xl blur-2xl transition-all duration-500 pointer-events-none`} />
 
-            <div className="relative rounded-2xl overflow-hidden border-2 border-red-500/70 shadow-[0_0_60px_rgba(239,68,68,0.35)] bg-slate-900/90 backdrop-blur-md">
-              
-              {/* Media Mode Switcher (Video vs Photo) */}
-              <div className="absolute top-3 right-3 z-30 flex items-center bg-slate-950/85 backdrop-blur-md rounded-xl p-1 border border-slate-700/80 shadow-lg">
+            {/* Highway Simulation Container */}
+            <div className="relative rounded-3xl overflow-hidden border-2 border-slate-700/80 bg-gradient-to-b from-slate-900/95 via-slate-950/95 to-[#050914] shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+
+              {/* Top Telemetry & Turbo HUD Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 sm:p-4 bg-slate-950/80 border-b border-slate-800 text-xs font-mono">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="flex h-2.5 w-2.5 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-white font-bold tracking-wider">BULLET-01 ACTIVE</span>
+                  </div>
+                  <span className="hidden sm:inline text-gray-500">|</span>
+                  <span className="text-cyan-400 font-bold hidden sm:inline">
+                    {isTurbo ? '⚡ WARP SPEED: 85 KM/H' : '🔋 ECO CRUISE: 35 KM/H'}
+                  </span>
+                </div>
+
+                {/* Interactive Turbo Boost Button */}
                 <button
-                  onClick={() => setMediaMode('video')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    mediaMode === 'video'
-                      ? 'bg-red-600 text-white shadow'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
+                  onClick={handleToggleTurbo}
+                  type="button"
+                  className={`btn btn-sm ${
+                    isTurbo
+                      ? 'btn-error shadow-lg shadow-red-500/50 animate-pulse text-white'
+                      : 'btn-outline btn-warning hover:btn-warning'
+                  } font-mono font-bold tracking-wider gap-1.5 rounded-xl`}
                 >
-                  <span>▶</span> Live Motion Video
-                </button>
-                <button
-                  onClick={() => setMediaMode('photo')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    mediaMode === 'photo'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <span>📸</span> Tesla Rickshaw
+                  <Zap className={`w-3.5 h-3.5 ${isTurbo ? 'animate-bounce' : ''}`} />
+                  {isTurbo ? 'TURBO ACTIVE (85 KM/H)' : 'ENGAGE TURBO BOOST 🚀'}
                 </button>
               </div>
 
-              {/* Video Player or High-Res Image */}
-              {mediaMode === 'video' ? (
-                <div className="relative">
-                  <video
-                    src="/moving-car.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-auto max-h-[380px] object-cover rounded-xl"
-                  />
-                  <div className="absolute top-3 left-3 bg-red-600/90 text-white text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow">
-                    <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                    LIVE MOTION
+              {/* The Highway Road Scene */}
+              <div className="relative h-[220px] sm:h-[280px] overflow-hidden flex flex-col justify-end">
+                {/* Distant Banani Skyline Silhouettes */}
+                <div className="absolute top-4 inset-x-0 flex items-end justify-between px-6 opacity-20 pointer-events-none">
+                  <div className="w-12 h-24 bg-slate-600 rounded-t-sm" />
+                  <div className="w-16 h-36 bg-slate-500 rounded-t-sm" />
+                  <div className="w-8 h-20 bg-slate-700 rounded-t-sm" />
+                  <div className="w-20 h-40 bg-slate-600 rounded-t-sm" />
+                  <div className="w-14 h-28 bg-slate-500 rounded-t-sm" />
+                  <div className="w-10 h-16 bg-slate-700 rounded-t-sm" />
+                </div>
+
+                {/* Overhead Highway Lamps with Passing Light Beams */}
+                <div className="absolute top-2 inset-x-0 flex justify-around pointer-events-none">
+                  {[...Array(5)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1 h-8 bg-gradient-to-b from-yellow-300/40 to-transparent blur-[1px]"
+                      style={{
+                        animation: isTurbo ? 'road-scroll 0.5s linear infinite' : 'road-scroll 1.2s linear infinite',
+                        animationDelay: `${i * 0.2}s`
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* ============================================== */}
+                {/* THE MOVING TESLA RICKSHAW VEHICLE              */}
+                {/* ============================================== */}
+                <div className={`relative z-10 mx-auto transition-transform duration-300 ${isTurbo ? 'translate-x-4 sm:translate-x-8' : ''}`}>
+                  <div className="relative inline-block">
+                    {/* Rocket Exhaust Fire / Electric Lightning Streams */}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none flex flex-col gap-1 items-end">
+                      <div className={`h-1.5 ${isTurbo ? 'w-36 bg-gradient-to-l from-red-500 via-amber-400 to-transparent' : 'w-20 bg-gradient-to-l from-cyan-400 via-blue-500 to-transparent'} rounded-full blur-[1px] animate-pulse`} />
+                      <div className={`h-2 ${isTurbo ? 'w-48 bg-gradient-to-l from-amber-400 via-red-500 to-transparent' : 'w-28 bg-gradient-to-l from-emerald-400 via-cyan-400 to-transparent'} rounded-full blur-[2px]`} />
+                      <div className={`h-1 ${isTurbo ? 'w-28 bg-gradient-to-l from-red-600 to-transparent' : 'w-14 bg-gradient-to-l from-blue-400 to-transparent'} rounded-full`} />
+                    </div>
+
+                    {/* Rickshaw Image Cutout with Suspension Bounce */}
+                    <div className="relative animate-bounce" style={{ animationDuration: isTurbo ? '0.2s' : '0.6s' }}>
+                      <img
+                        src="/tesla-bullet-rickshaw.jpg"
+                        alt="Jashim's Moving Tesla Rickshaw"
+                        className="w-72 sm:w-96 h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] rounded-xl"
+                      />
+                    </div>
                   </div>
                 </div>
-              ) : (
-                <img
-                  src="/tesla-bullet-rickshaw.jpg"
-                  alt="Dhaka Battery Tesla Rickshaw Bullet"
-                  className="w-full h-auto max-h-[380px] object-cover rounded-xl"
-                />
-              )}
 
-              {/* Floating Vehicle Specs Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-red-500/40 z-20">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-3 w-3 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                  </span>
-                  <span className="text-white font-black text-sm tracking-wider uppercase">Jashim's "Tesla" Bullet</span>
+                {/* ============================================== */}
+                {/* THE ASPHALT ROADBED WITH ANIMATED LANE STRIPES */}
+                {/* ============================================== */}
+                <div className="relative z-20 w-full bg-gradient-to-b from-[#111827] via-[#0b0f19] to-[#030712] pt-3 pb-2 border-t-2 border-slate-700/60 shadow-inner">
+                  {/* Road Asphalt Texture Lines */}
+                  <div className="h-2 w-full bg-slate-900/60 mb-1" />
+
+                  {/* Animated Dashed Lane Strip */}
+                  <div className={`h-1.5 w-full road-lane-strip ${isTurbo ? 'road-scrolling-turbo' : 'road-scrolling-normal'}`} />
+
+                  {/* Road Curb Bottom Glow */}
+                  <div className="h-2 w-full bg-gradient-to-r from-red-500/20 via-yellow-500/20 to-cyan-500/20 mt-1" />
                 </div>
+              </div>
+
+              {/* Bottom Live Corridor Status Footer */}
+              <div className="p-3 bg-slate-950/95 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="text-red-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-red-950/70 border border-red-700/60">
-                    {mediaMode === 'video' ? '🎬 LIVE SPEED DEMO' : '🛺 3-WHEELER'}
-                  </span>
-                  <span className="text-cyan-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-700/60">
-                    ⚡ 3 SEATS • 100% ELECTRIC
-                  </span>
+                  <span className="text-red-400 font-bold">🛺 CORRIDOR:</span>
+                  <span className="text-gray-300">Banani Rd 11 ➔ Mohakhali Flyover</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-400 font-bold">🪑 SEATS: 2/3 (NUSRAT & RAFIQ)</span>
+                  <span className="text-yellow-400 font-bold">FARE: ৳54 POOLED</span>
                 </div>
               </div>
             </div>
@@ -304,7 +374,7 @@ const LandingPage = () => {
             <div className="mt-3 flex items-center justify-center gap-2 text-xs font-mono text-gray-400">
               <span className="text-red-400 font-semibold">⚡ The Battery-Powered Legend of Banani</span>
               <span>•</span>
-              <span className="text-gray-300">Fast, Nimble & Traffic-Proof</span>
+              <span className="text-gray-300">Click Turbo to see Bullet sprint through traffic!</span>
             </div>
           </div>
 
@@ -328,22 +398,32 @@ const LandingPage = () => {
             and never argue with a meter again.
           </p>
 
-          {/* CTA BUTTONS */}
-          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          {/* ======================================================== */}
+          {/* DAISYUI / AURA ACTION BUTTONS (HIGH-END NEON BORDERS)   */}
+          {/* ======================================================== */}
+          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-16">
+            {/* Passenger Aura Button */}
             <Link
               to="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold rounded-xl text-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+              className="btn-aura-emerald group w-full sm:w-auto text-decoration-none"
             >
-              <Zap className="w-5 h-5" />
-              Ride as Passenger
-              <ArrowRight className="w-5 h-5" />
+              <span className="btn-aura-inner text-white group-hover:text-emerald-300 transition-colors">
+                <Zap className="w-5 h-5 text-emerald-400 animate-pulse" />
+                <span className="text-base font-extrabold tracking-wide">Ride as Passenger</span>
+                <ArrowRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1.5 transition-transform" />
+              </span>
             </Link>
+
+            {/* Driver Aura Button */}
             <Link
               to="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 border-2 border-red-500/60 text-red-400 font-extrabold rounded-xl text-lg hover:bg-red-500/10 hover:border-red-400 transition-all duration-300 hover:-translate-y-0.5"
+              className="btn-aura-red group w-full sm:w-auto text-decoration-none"
             >
-              Drive Your "Tesla"
-              <ArrowRight className="w-5 h-5" />
+              <span className="btn-aura-inner text-white group-hover:text-red-300 transition-colors">
+                <Car className="w-5 h-5 text-red-400 animate-pulse" />
+                <span className="text-base font-extrabold tracking-wide">Drive Your "Tesla"</span>
+                <ArrowRight className="w-5 h-5 text-red-400 group-hover:translate-x-1.5 transition-transform" />
+              </span>
             </Link>
           </div>
 
@@ -438,10 +518,20 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              <div className="text-right">
-                <span className="text-xs text-gray-400 block font-mono">Total Passenger Fare</span>
-                <span className="text-3xl font-black text-emerald-400 tracking-tight">৳{totalFare}.00</span>
-                <span className="text-[10px] text-gray-500 block font-mono">Stored in DB as {totalFare * 100} poysha</span>
+              <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-slate-800/80 mt-2">
+                <button
+                  onClick={handleSimulateFare}
+                  type="button"
+                  className="btn btn-sm btn-outline btn-accent gap-2 font-mono font-bold rounded-xl"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Simulate Booking Notification
+                </button>
+                <div className="text-left sm:text-right">
+                  <span className="text-xs text-gray-400 block font-mono">Total Passenger Fare</span>
+                  <span className="text-3xl font-black text-emerald-400 tracking-tight">৳{totalFare}.00</span>
+                  <span className="text-[10px] text-gray-500 block font-mono">Stored in DB as {totalFare * 100} poysha</span>
+                </div>
               </div>
             </div>
           </div>
@@ -728,21 +818,18 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Spec visual card with Video in motion */}
+            {/* Spec visual card with Authentic Tesla Rickshaw Blueprint */}
             <div className="relative bg-slate-900 border border-red-500/30 rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl pointer-events-none" />
               <div className="relative rounded-2xl overflow-hidden mb-6 border border-slate-800 shadow-xl">
-                <video
-                  src="/moving-car.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-auto max-h-[300px] object-cover"
+                <img
+                  src="/tesla-bullet-rickshaw.jpg"
+                  alt="Bullet Architecture Blueprint"
+                  className="w-full h-auto max-h-[320px] object-cover"
                 />
-                <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs font-mono text-cyan-400 font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                  BULLET IN MOTION — ROAD 11
+                <div className="absolute bottom-3 left-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-red-500/40 text-xs font-mono text-white font-bold flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                  <span>JASHIM'S TESLA BULLET • 100% ELECTRIC</span>
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs font-mono text-gray-400 pt-2 border-t border-slate-800">
