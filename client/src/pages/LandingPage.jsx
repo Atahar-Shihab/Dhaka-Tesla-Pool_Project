@@ -49,6 +49,62 @@ const LandingPage = () => {
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState(null);
 
+  // Typewriter Looping Headline Effect
+  const typewriterPhrases = [
+    {
+      part1: 'Share a seat. ',
+      gradient: 'Split the fare.',
+      part2: 'Survive Dhaka traffic.'
+    },
+    {
+      part1: 'Hop on Bullet. ',
+      gradient: 'Save 20% fare.',
+      part2: 'Beat Banani gridlock.'
+    },
+    {
+      part1: '100% Electric. ',
+      gradient: '3-Seat Capacity.',
+      part2: 'Zero double-booking.'
+    }
+  ];
+
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charCount, setCharCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentPhrase = typewriterPhrases[phraseIdx];
+    const totalChars = currentPhrase.part1.length + currentPhrase.gradient.length + currentPhrase.part2.length;
+
+    let timer;
+
+    if (!isDeleting && charCount < totalChars) {
+      timer = setTimeout(() => {
+        setCharCount((prev) => prev + 1);
+      }, 50);
+    } else if (!isDeleting && charCount === totalChars) {
+      timer = setTimeout(() => {
+        setIsDeleting(true);
+      }, 2400);
+    } else if (isDeleting && charCount > 0) {
+      timer = setTimeout(() => {
+        setCharCount((prev) => prev - 1);
+      }, 25);
+    } else if (isDeleting && charCount === 0) {
+      setIsDeleting(false);
+      setPhraseIdx((prev) => (prev + 1) % typewriterPhrases.length);
+    }
+
+    return () => clearTimeout(timer);
+  }, [charCount, isDeleting, phraseIdx]);
+
+  const currentPhrase = typewriterPhrases[phraseIdx];
+  const l1 = currentPhrase.part1.length;
+  const l2 = currentPhrase.gradient.length;
+  const displayPart1 = currentPhrase.part1.slice(0, Math.min(charCount, l1));
+  const displayGradient = charCount > l1 ? currentPhrase.gradient.slice(0, Math.min(charCount - l1, l2)) : '';
+  const displayPart2 = charCount > l1 + l2 ? currentPhrase.part2.slice(0, charCount - (l1 + l2)) : '';
+
   // Moving Rickshaw Journey State (Garibook style)
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentStopIndex, setCurrentStopIndex] = useState(0);
@@ -259,14 +315,25 @@ const LandingPage = () => {
                 <span className="font-semibold tracking-wide">DHAKA ELECTRIC RIDE-POOLING MVP</span>
               </div>
 
-              {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12] mb-6">
-                Share a seat.{' '}
-                <span className="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Split the fare.
-                </span>
-                <br />
-                <span className="text-slate-900 dark:text-slate-100">Survive Dhaka traffic.</span>
+              {/* Looping Typewriter Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12] mb-6 min-h-[145px] sm:min-h-[175px] lg:min-h-[210px] flex flex-col justify-start select-none">
+                <div>
+                  <span>{displayPart1}</span>
+                  {displayGradient && (
+                    <span className="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
+                      {displayGradient}
+                    </span>
+                  )}
+                  {charCount <= l1 + l2 && (
+                    <span className="inline-block w-[3px] h-[0.85em] bg-emerald-500 dark:bg-emerald-400 ml-1.5 align-middle animate-pulse" />
+                  )}
+                </div>
+                {charCount > l1 + l2 && (
+                  <div className="mt-1">
+                    <span className="text-slate-900 dark:text-slate-100">{displayPart2}</span>
+                    <span className="inline-block w-[3px] h-[0.85em] bg-emerald-500 dark:bg-emerald-400 ml-1.5 align-middle animate-pulse" />
+                  </div>
+                )}
               </h1>
 
               {/* Sub-headline */}
