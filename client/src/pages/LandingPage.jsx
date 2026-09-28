@@ -456,6 +456,112 @@ const LandingPage = () => {
       </section>
 
       {/* ========================================================= */}
+      {/* 2.5 GARIBOOK-STYLE CONTINUOUS HORIZONTAL RIDE STATS BANNER */}
+      {/* ========================================================= */}
+      <section className="relative overflow-hidden bg-slate-100 dark:bg-[#070b14] border-b border-slate-200 dark:border-slate-800 transition-colors">
+        {/* Subtle background glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-cyan-500/5 pointer-events-none" />
+
+        {/* Stats Metrics Container */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 sm:pb-28">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold mb-2">
+              <Sparkles className="w-3.5 h-3.5" /> LIVE CORRIDOR METRICS
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Dhaka Electric Fleet Operations
+            </h2>
+          </div>
+
+          {/* Metric Cards Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-left">
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
+                <Shield className="w-4 h-4" />
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Concurrency</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                3 Seats
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                SELECT FOR UPDATE lock
+              </p>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 text-teal-600 dark:text-cyan-400 mb-2">
+                <DollarSign className="w-4 h-4" />
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Fare Precision</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                ৳0.00 Float
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                100% Integer Poysha
+              </p>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-2">
+                <Zap className="w-4 h-4" />
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Discount</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                20% Split
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                Automatic pool discount
+              </p>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Verification</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                27 / 27
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                Automated tests passing
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* SVG Cityscape Skyline Silhouette */}
+        <div className="absolute bottom-0 inset-x-0 h-28 pointer-events-none overflow-hidden flex items-end">
+          <svg
+            className="w-full h-24 text-slate-200/80 dark:text-slate-800/50 fill-current"
+            viewBox="0 0 1440 120"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M0,120 L0,90 L25,90 L25,70 L45,70 L45,90 L70,90 L70,45 L100,45 L100,90 L135,90 L135,55 L155,55 L155,25 L175,25 L175,55 L195,55 L195,90 L240,90 L240,75 L270,75 L270,35 L300,35 L300,75 L330,75 L330,90 L380,90 L380,50 L410,50 L410,90 L450,90 L450,60 L470,60 L470,20 L495,20 L495,60 L515,60 L515,90 L570,90 L570,70 L600,70 L600,40 L630,40 L630,70 L660,70 L660,90 L710,90 L710,30 L735,15 L760,30 L760,90 L810,90 L810,55 L840,55 L840,90 L880,90 L880,45 L910,45 L910,90 L950,90 L950,60 L975,60 L975,25 L1000,25 L1000,60 L1025,60 L1025,90 L1070,90 L1070,50 L1100,50 L1100,90 L1150,90 L1150,35 L1180,35 L1180,90 L1230,90 L1230,65 L1260,65 L1260,90 L1310,90 L1310,40 L1340,40 L1340,90 L1390,90 L1390,60 L1440,60 L1440,120 Z" />
+          </svg>
+        </div>
+
+        {/* Road Track Corridor */}
+        <div className="absolute bottom-0 inset-x-0 h-6 bg-slate-200/90 dark:bg-slate-950 border-t border-slate-300 dark:border-slate-800 pointer-events-none flex items-center">
+          <div className="w-full h-[2px] border-b border-dashed border-slate-400 dark:border-slate-700/80" />
+        </div>
+
+        {/* Continuous Horizontal Moving Rickshaw */}
+        <div className="garibook-rickshaw-transit absolute bottom-1.5 left-0 pointer-events-none z-20">
+          <div className="garibook-rickshaw-bounce">
+            <picture>
+              <source srcSet="/tesla-bullet-rickshaw-cutout.webp" type="image/webp" />
+              <img
+                src="/tesla-bullet-rickshaw-cutout.png"
+                alt="Bullet Electric Rickshaw"
+                className="h-16 sm:h-20 md:h-24 w-auto object-contain select-none pointer-events-none"
+              />
+            </picture>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
       {/* 3. GARIBOOK-STYLE GSAP MOVING RICKSHAW TRANSIT SIMULATOR  */}
       {/* ========================================================= */}
       <section className="py-16 lg:py-24 bg-white dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 transition-colors">
