@@ -203,56 +203,130 @@ const LandingPage = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-          {/* Tesla Vehicle — zooms in from right */}
+          {/* Tesla "Rickshaw" — zooms in from right */}
           <div ref={teslaRef} className="mb-8">
             <div className="relative inline-block">
               {/* Glow behind Tesla */}
-              <div className="absolute inset-0 blur-3xl bg-green-500/20 rounded-full scale-150" />
+              <div className="absolute inset-0 blur-3xl bg-red-500/20 rounded-full scale-150" />
 
-              {/* Tesla SVG */}
-              <svg width="200" height="80" viewBox="0 0 200 80" className="relative drop-shadow-2xl">
-                {/* Car body */}
+              {/* Battery Rickshaw SVG — The Dhaka "Tesla" */}
+              <svg width="280" height="160" viewBox="0 0 280 160" className="relative drop-shadow-2xl">
                 <defs>
-                  <linearGradient id="carGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#22c55e', stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: '#15803d', stopOpacity: 1 }} />
+                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: '#dc2626', stopOpacity: 1 }} />
                   </linearGradient>
-                  <linearGradient id="windowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#93c5fd', stopOpacity: 0.8 }} />
-                    <stop offset="100%" style={{ stopColor: '#3b82f6', stopOpacity: 0.6 }} />
+                  <linearGradient id="canopyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: '#b91c1c', stopOpacity: 1 }} />
+                  </linearGradient>
+                  <linearGradient id="seatGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#1e293b', stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: '#0f172a', stopOpacity: 1 }} />
                   </linearGradient>
                 </defs>
-                {/* Underbody glow */}
-                <ellipse cx="100" cy="68" rx="70" ry="6" fill="rgba(34, 197, 94, 0.3)" />
-                {/* Main body */}
-                <path d="M30,50 L40,30 L70,20 L130,20 L160,30 L170,50 Z" fill="url(#carGrad)" stroke="#16a34a" strokeWidth="1.5" />
-                {/* Roof/windows */}
-                <path d="M55,30 L70,22 L130,22 L145,30 Z" fill="url(#windowGrad)" stroke="#60a5fa" strokeWidth="0.5" />
-                {/* Window divider */}
-                <line x1="100" y1="22" x2="100" y2="30" stroke="#1e40af" strokeWidth="1" opacity="0.5" />
-                {/* Front headlight */}
-                <circle cx="165" cy="42" r="4" fill="#fbbf24" opacity="0.9" />
-                <circle cx="165" cy="42" r="7" fill="#fbbf24" opacity="0.2" />
-                {/* Rear light */}
-                <circle cx="35" cy="42" r="3" fill="#ef4444" opacity="0.8" />
-                {/* Wheels */}
-                <circle cx="60" cy="55" r="11" fill="#1e293b" stroke="#475569" strokeWidth="2" />
-                <circle cx="60" cy="55" r="5" fill="#64748b" />
-                <circle cx="60" cy="55" r="2" fill="#94a3b8" />
-                <circle cx="140" cy="55" r="11" fill="#1e293b" stroke="#475569" strokeWidth="2" />
-                <circle cx="140" cy="55" r="5" fill="#64748b" />
-                <circle cx="140" cy="55" r="2" fill="#94a3b8" />
-                {/* Speed exhaust / electric trail */}
-                <path d="M25,42 L10,40 L5,42 L10,44 L25,42" fill="rgba(59, 130, 246, 0.4)" />
-                <path d="M20,42 L0,39 L-8,42 L0,45 L20,42" fill="rgba(59, 130, 246, 0.2)" />
-                {/* Tesla T logo on side */}
-                <text x="95" y="44" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold" fontFamily="Arial">T</text>
+
+                {/* Ground shadow */}
+                <ellipse cx="150" cy="145" rx="100" ry="8" fill="rgba(239, 68, 68, 0.15)" />
+
+                {/* === BACK SECTION (Passenger area) === */}
+                {/* Rear frame / body base */}
+                <rect x="100" y="85" width="120" height="35" rx="4" fill="url(#bodyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
+
+                {/* Passenger seat */}
+                <rect x="110" y="75" width="100" height="15" rx="3" fill="url(#seatGrad)" stroke="#334155" strokeWidth="1" />
+                {/* Seat back */}
+                <rect x="200" y="50" width="10" height="40" rx="3" fill="url(#seatGrad)" stroke="#334155" strokeWidth="1" />
+
+                {/* Canopy / Roof — the iconic rickshaw hood */}
+                <path d="M105,50 Q110,10 155,8 Q200,6 215,50" fill="url(#canopyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
+                {/* Canopy support poles */}
+                <line x1="108" y1="50" x2="108" y2="85" stroke="#fbbf24" strokeWidth="2" />
+                <line x1="212" y1="50" x2="212" y2="85" stroke="#fbbf24" strokeWidth="2" />
+                {/* Canopy top trim */}
+                <path d="M105,50 L215,50" stroke="#fbbf24" strokeWidth="2" />
+
+                {/* Canopy decorative fringe */}
+                {[...Array(12)].map((_, i) => (
+                  <line key={i} x1={108 + i * 9} y1="50" x2={112 + i * 9} y2="56" stroke="#fbbf24" strokeWidth="1" opacity="0.6" />
+                ))}
+
+                {/* Tesla T logo on canopy */}
+                <text x="160" y="38" textAnchor="middle" fill="white" fontSize="18" fontWeight="bold" fontFamily="Arial">T</text>
+                {/* TESLA text on body */}
+                <text x="160" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="Arial" letterSpacing="3">TESLA</text>
+
+                {/* === FRONT SECTION (Driver area) === */}
+                {/* Driver platform / handlebar area */}
+                <rect x="40" y="85" width="65" height="30" rx="3" fill="url(#bodyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
+
+                {/* Handlebar */}
+                <line x1="55" y1="75" x2="55" y2="88" stroke="#94a3b8" strokeWidth="3" />
+                <line x1="42" y1="75" x2="68" y2="75" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+                {/* Handlebar grips */}
+                <circle cx="42" cy="75" r="3" fill="#475569" />
+                <circle cx="68" cy="75" r="3" fill="#475569" />
+
+                {/* Headlight */}
+                <circle cx="40" cy="95" r="5" fill="#fbbf24" opacity="0.9" />
+                <circle cx="40" cy="95" r="9" fill="#fbbf24" opacity="0.15" />
+
+                {/* Battery box (under driver seat) */}
+                <rect x="60" y="100" width="35" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" strokeWidth="1" />
+                <text x="77" y="110" textAnchor="middle" fill="#93c5fd" fontSize="6" fontFamily="Arial">⚡BATTERY</text>
+
+                {/* Connection rod between front and back */}
+                <rect x="95" y="95" width="10" height="8" fill="#991b1b" />
+
+                {/* === WHEELS (3 wheels — 1 front, 2 back) === */}
+                {/* Front wheel (single) */}
+                <circle cx="50" cy="130" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
+                <circle cx="50" cy="130" r="8" fill="#334155" />
+                <circle cx="50" cy="130" r="3" fill="#64748b" />
+                {/* Spokes */}
+                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+                  <line key={i} x1="50" y1="130" x2={50 + 14 * Math.cos(angle * Math.PI / 180)} y2={130 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
+                ))}
+
+                {/* Fork connecting front wheel to frame */}
+                <line x1="50" y1="114" x2="50" y2="85" stroke="#94a3b8" strokeWidth="3" />
+
+                {/* Rear left wheel */}
+                <circle cx="130" cy="135" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
+                <circle cx="130" cy="135" r="8" fill="#334155" />
+                <circle cx="130" cy="135" r="3" fill="#64748b" />
+                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+                  <line key={`bl${i}`} x1="130" y1="135" x2={130 + 14 * Math.cos(angle * Math.PI / 180)} y2={135 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
+                ))}
+
+                {/* Rear right wheel */}
+                <circle cx="195" cy="135" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
+                <circle cx="195" cy="135" r="8" fill="#334155" />
+                <circle cx="195" cy="135" r="3" fill="#64748b" />
+                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+                  <line key={`br${i}`} x1="195" y1="135" x2={195 + 14 * Math.cos(angle * Math.PI / 180)} y2={135 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
+                ))}
+
+                {/* Rear axle */}
+                <line x1="130" y1="120" x2="130" y2="135" stroke="#94a3b8" strokeWidth="2" />
+                <line x1="195" y1="120" x2="195" y2="135" stroke="#94a3b8" strokeWidth="2" />
+
+                {/* Speed trail / electric sparks behind */}
+                <path d="M225,100 L245,97 L240,100 L255,97 L250,100 L265,97" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.5" />
+                <path d="M225,110 L250,107 L245,110 L270,107" stroke="#22c55e" strokeWidth="1.5" fill="none" opacity="0.4" />
+                <path d="M220,105 L240,103 L238,105 L260,102" stroke="#60a5fa" strokeWidth="1" fill="none" opacity="0.3" />
+
+                {/* Passenger silhouettes on seat */}
+                <circle cx="140" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
+                <circle cx="160" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
+                <circle cx="180" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
               </svg>
 
               {/* "Bullet" label */}
-              <div className="mt-2 text-green-400 text-sm font-mono tracking-widest">
-                ⚡ BULLET ⚡
+              <div className="mt-3 text-red-400 text-sm font-mono tracking-widest">
+                ⚡ BULLET — 3 Seats ⚡
               </div>
+              <div className="text-gray-500 text-xs mt-1">Jashim's Battery-Powered "Tesla"</div>
             </div>
           </div>
 
