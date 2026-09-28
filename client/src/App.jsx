@@ -5,6 +5,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
@@ -48,6 +49,7 @@ function App() {
           </Routes>
         </main>
         <Toaster position="top-right" />
+        <ToastContainer theme="dark" position="top-right" autoClose={3000} />
       </div>
     </AuthProvider>
   );
