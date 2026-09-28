@@ -22,15 +22,18 @@ const DriverDashboard = () => {
       try {
         // Fetch current user status
         const meRes = await api.get('/auth/me');
-        setIsActive(meRes.data.isActive || false);
+        const userData = meRes.data?.user || meRes.data;
+        setIsActive(userData?.vehicle?.isActive || false);
 
         // Fetch driver history for stats
         const historyRes = await api.get('/driver/history');
-        const pools = historyRes.data || [];
+        const rawPools = historyRes.data?.data || historyRes.data;
+        const pools = Array.isArray(rawPools) ? rawPools : [];
         
         const completed = pools.filter(p => p.status === 'COMPLETED');
         const earned = completed.reduce((sum, pool) => {
-          const poolEarnings = pool.rides.reduce((rSum, ride) => rSum + (Number(ride.fare) || 0), 0);
+          const rides = pool.rideRequests || pool.rides || [];
+          const poolEarnings = rides.reduce((rSum, ride) => rSum + (Number(ride.fareAmount || ride.fare) || 0), 0);
           return sum + poolEarnings;
         }, 0);
 
@@ -57,8 +60,10 @@ const DriverDashboard = () => {
     setIsToggling(true);
     try {
       const res = await api.patch('/driver/status', { isActive: !isActive });
-      setIsActive(res.data.isActive);
-      toast.success(res.data.isActive ? 'You are now online' : 'You are now offline');
+      const updatedVehicle = res.data?.data || res.data;
+      const newStatus = updatedVehicle?.isActive ?? !isActive;
+      setIsActive(newStatus);
+      toast.success(newStatus ? 'You are now online' : 'You are now offline');
     } catch (error) {
       toast.error('Failed to update status');
     } finally {

@@ -17,7 +17,7 @@ const PoolDetails = () => {
   const fetchPoolDetails = async () => {
     try {
       const res = await api.get(`/driver/pool/${poolId}`);
-      setPool(res.data);
+      setPool(res.data?.data || res.data);
     } catch (error) {
       toast.error('Failed to load pool details');
       navigate('/driver');
@@ -46,10 +46,11 @@ const PoolDetails = () => {
   if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
   if (!pool) return <div className="pt-20 text-center text-white">Pool not found</div>;
 
-  const totalSeats = 3;
-  const occupiedSeats = pool.rides?.reduce((acc, ride) => 
-    ['MATCHED', 'DRIVER_ARRIVED', 'IN_PROGRESS'].includes(ride.status) ? acc + ride.seats : acc
-  , 0) || 0;
+  const rides = pool.rideRequests || pool.rides || [];
+  const totalSeats = pool.vehicle?.capacity || 3;
+  const occupiedSeats = pool.occupiedSeats ?? rides.reduce((acc, ride) => 
+    ['MATCHED', 'DRIVER_ARRIVED', 'IN_PROGRESS'].includes(ride.status) ? acc + (ride.seatsNeeded ?? ride.seats ?? 1) : acc
+  , 0);
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
@@ -104,11 +105,11 @@ const PoolDetails = () => {
 
         {/* Passengers List */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">Passengers ({pool.rides?.length || 0})</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Passengers ({rides.length})</h2>
           
           <div className="space-y-4">
-            {pool.rides?.length > 0 ? (
-              pool.rides.map((ride) => (
+            {rides.length > 0 ? (
+              rides.map((ride) => (
                 <div key={ride.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
                   <div className="p-5 md:p-6">
                     <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -122,7 +123,7 @@ const PoolDetails = () => {
                             </div>
                             <div>
                               <h3 className="text-white font-medium">{ride.passenger?.name || 'Passenger'}</h3>
-                              <p className="text-sm text-gray-400">{ride.seats} Seat{ride.seats > 1 ? 's' : ''}</p>
+                              <p className="text-sm text-gray-400">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
                             </div>
                           </div>
                           <StatusBadge status={ride.status} />
@@ -144,7 +145,7 @@ const PoolDetails = () => {
                           </div>
                           <div className="text-right">
                             <p className="text-sm text-gray-500">Fare</p>
-                            <p className="text-lg font-bold text-green-400">{formatFare(ride.fare)}</p>
+                            <p className="text-lg font-bold text-green-400">{formatFare(ride.fareAmount ?? ride.fare)}</p>
                           </div>
                         </div>
                       </div>

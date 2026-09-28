@@ -26,7 +26,8 @@ const RequestRide = () => {
     const fetchLocations = async () => {
       try {
         const res = await api.get('/locations');
-        setLocations(res.data);
+        const locs = res.data?.data || res.data;
+        setLocations(Array.isArray(locs) ? locs : []);
       } catch (error) {
         toast.error('Failed to load locations');
       } finally {
@@ -54,7 +55,18 @@ const RequestRide = () => {
       setIsEstimating(true);
       try {
         const res = await api.get(`/rides/estimate?pickupLocationId=${formData.pickupLocationId}&dropoffLocationId=${formData.dropoffLocationId}`);
-        setEstimate(res.data);
+        const estimatePayload = res.data?.data || res.data;
+        const solo = estimatePayload.solo || estimatePayload;
+        const pooled = estimatePayload.pooled || estimatePayload;
+        const distKm = ((solo.distanceCharge || 0) / 1500).toFixed(1);
+        
+        setEstimate({
+          distanceKm: distKm,
+          estimatedDurationMinutes: Math.max(5, Math.round(Number(distKm) * 4)),
+          estimatedFare: pooled.totalFare || solo.totalFare || 3000,
+          soloFare: solo.totalFare,
+          pooledFare: pooled.totalFare
+        });
       } catch (error) {
         setEstimate(null);
         toast.error('Failed to get fare estimate');
@@ -88,9 +100,15 @@ const RequestRide = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await api.post('/rides', formData);
+      const payload = {
+        pickupLocationId: formData.pickupLocationId,
+        dropoffLocationId: formData.dropoffLocationId,
+        seatsNeeded: Number(formData.seats) || 1
+      };
+      const res = await api.post('/rides', payload);
+      const createdRide = res.data?.data || res.data;
       toast.success('Ride requested successfully!');
-      navigate(`/passenger/rides/${res.data.id}`);
+      navigate(`/passenger/rides/${createdRide.id}`);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to request ride');
     } finally {
@@ -125,7 +143,7 @@ const RequestRide = () => {
               >
                 <option value="">Select pickup location...</option>
                 {locations.map(loc => (
-                  <option key={loc.id} value={loc.id}>{loc.name} - {loc.address}</option>
+                  <option key={loc.id} value={loc.id}>{loc.name}</option>
                 ))}
               </select>
             </div>
@@ -143,7 +161,7 @@ const RequestRide = () => {
               >
                 <option value="">Select dropoff location...</option>
                 {locations.map(loc => (
-                  <option key={loc.id} value={loc.id}>{loc.name} - {loc.address}</option>
+                  <option key={loc.id} value={loc.id}>{loc.name}</option>
                 ))}
               </select>
             </div>

@@ -18,7 +18,7 @@ const RideDetails = () => {
     const fetchRide = async () => {
       try {
         const res = await api.get(`/rides/${id}`);
-        setRide(res.data);
+        setRide(res.data?.data || res.data);
       } catch (error) {
         toast.error('Failed to load ride details');
       } finally {
@@ -92,11 +92,11 @@ const RideDetails = () => {
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">Total Fare</p>
-              <p className="text-2xl font-bold text-white">{formatFare(ride.fare)}</p>
+              <p className="text-2xl font-bold text-white">{formatFare(ride.fareAmount ?? ride.fare)}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">Seats Booked</p>
-              <p className="text-lg text-white">{ride.seats} Seat{ride.seats > 1 ? 's' : ''}</p>
+              <p className="text-lg text-white">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">Date</p>
@@ -117,7 +117,7 @@ const RideDetails = () => {
                   <div>
                     <p className="text-white font-medium">{ride.pool.driver.name}</p>
                     <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
-                      <Car className="w-4 h-4" /> {ride.pool.vehicleModel} ({ride.pool.vehicleColor})
+                      <Car className="w-4 h-4" /> {ride.pool.vehicle?.name || ride.pool.vehicleModel || 'Tesla Bullet'} {ride.pool.vehicle?.licensePlate ? `(${ride.pool.vehicle.licensePlate})` : ''}
                     </p>
                   </div>
                 </div>
