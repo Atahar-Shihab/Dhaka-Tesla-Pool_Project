@@ -1091,18 +1091,81 @@ const LandingPage = () => {
       {/* ========================================================= */}
       {/* 8. FOOTER WITH REPO DETAILS & TECH SPECS                  */}
       {/* ========================================================= */}
-      <footer className="bg-slate-100 dark:bg-slate-950 py-10 px-4 text-xs text-slate-600 dark:text-slate-400 text-center transition-colors">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-900 dark:text-white">Dhaka Tesla Pool</span>
-            <span>•</span>
-            <span>RoBenDevs Software Engineering Internship Assessment</span>
+      <footer className="bg-slate-950 text-slate-300 py-16 px-4 border-t border-slate-800 transition-colors relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12 border-b border-slate-800/80 pb-12">
+            
+            {/* Brand Section */}
+            <div className="col-span-1 md:col-span-2">
+              <Link to="/" className="flex items-center gap-2 group mb-5 inline-flex">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-shadow">
+                  <Zap className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xl font-bold text-white">
+                  Dhaka <span className="text-emerald-400">Tesla Pool</span>
+                </span>
+              </Link>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
+                An innovative ride-pooling platform for Dhaka's electric rickshaws. Built with focus on ACID compliance, precise integer accounting, and robust testing.
+              </p>
+              <div className="flex items-center gap-3">
+                <a href="https://github.com/Atahar-Shihab/Dhaka-Tesla-Pool_Project" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-700 transition-all shadow-sm">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                  </svg>
+                </a>
+                <a href="#" className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-700 transition-all shadow-sm">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-white font-bold mb-5 uppercase tracking-widest text-xs">Platform</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link to="/register" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Create Account</Link></li>
+                <li><Link to="/login" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Driver Login</Link></li>
+                <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Back to Top</button></li>
+              </ul>
+            </div>
+
+            {/* Assessment Info */}
+            <div>
+              <h4 className="text-white font-bold mb-5 uppercase tracking-widest text-xs">Evaluation Setup</h4>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> PostgreSQL & Prisma
+                </li>
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Express & Node.js
+                </li>
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> React & TailwindCSS
+                </li>
+                <li className="flex items-center gap-2 text-slate-400 mt-3 pt-3 border-t border-slate-800">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <strong className="text-emerald-400 font-mono">27/27 Tests Passing</strong>
+                </li>
+              </ul>
+            </div>
+
           </div>
 
-          <div className="flex items-center gap-4 font-mono text-slate-500 dark:text-slate-400">
-            <span>PERN Stack (PostgreSQL, Express, React, Node.js)</span>
-            <span>•</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold">27/27 Tests Green</span>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+            <p>&copy; 2026 Dhaka Tesla Pool. All rights reserved.</p>
+            <p className="flex items-center gap-1.5">
+              Designed for RoBenDevs <Zap className="w-3.5 h-3.5 text-emerald-500" />
+            </p>
           </div>
         </div>
       </footer>
