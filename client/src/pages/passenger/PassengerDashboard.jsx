@@ -26,7 +26,8 @@ const PassengerDashboard = () => {
         setIsLoading(true);
         // Fetch all rides for this passenger
         const response = await api.get('/rides/my');
-        const rides = response.data || [];
+        const rawRides = response.data?.data || response.data;
+        const rides = Array.isArray(rawRides) ? rawRides : [];
         
         // Calculate basic stats
         const activeCount = rides.filter(r => 
@@ -37,7 +38,7 @@ const PassengerDashboard = () => {
         
         const spent = rides
           .filter(r => r.status === 'COMPLETED')
-          .reduce((sum, ride) => sum + (Number(ride.fare) || 0), 0);
+          .reduce((sum, ride) => sum + (Number(ride.fareAmount || ride.fare) || 0), 0);
           
         setStats({
           activeRides: activeCount,
@@ -169,7 +170,7 @@ const PassengerDashboard = () => {
                       </div>
                       
                       <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
-                        <span className="text-lg font-bold text-slate-900 dark:text-white">{formatFare(ride.fare)}</span>
+                        <span className="text-lg font-bold text-slate-900 dark:text-white">{formatFare(ride.fareAmount ?? ride.fare)}</span>
                         <div className="text-slate-500 dark:text-slate-400 flex items-center text-xs">
                           Details <ChevronRight className="w-4 h-4 ml-1" />
                         </div>
