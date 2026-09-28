@@ -3,6 +3,7 @@ import daisyui from 'daisyui';
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -18,22 +19,16 @@ export default {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
-        'shimmer': {
-          '0%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
-        },
       },
       animation: {
         'road-scroll': 'road-scroll 1.2s linear infinite',
-        'road-scroll-fast': 'road-scroll 0.4s linear infinite',
         'aura-spin': 'aura-spin 4s linear infinite',
-        'shimmer': 'shimmer 3s ease-in-out infinite',
       },
     },
   },
   plugins: [daisyui],
   daisyui: {
-    themes: ['dark', 'emerald'],
+    themes: ['light', 'dark', 'emerald'],
     darkTheme: 'dark',
   },
 };
