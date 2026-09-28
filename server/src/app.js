@@ -60,11 +60,15 @@ app.use(errorHandler);
 // ==========================================
 // Server Initialization
 // ==========================================
+// Only start listening when this file is run directly (not when imported by tests)
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/api/health`);
+  });
+}
 
 module.exports = app; // Export for testing purposes
+
