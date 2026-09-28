@@ -23,8 +23,8 @@ const LoginPage = () => {
   };
 
   // Demo fillers
-  const fillNusrat = () => setFormData({ email: 'nusrat@example.com', password: 'password123' });
-  const fillJashim = () => setFormData({ email: 'jashim@example.com', password: 'password123' });
+  const fillNusrat = () => setFormData({ email: 'nusrat@teslapool.com', password: 'password123' });
+  const fillJashim = () => setFormData({ email: 'jashim@teslapool.com', password: 'password123' });
 
   // Handle form submission
   const handleSubmit = async (e) => {
