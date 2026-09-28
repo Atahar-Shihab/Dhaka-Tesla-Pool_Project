@@ -203,130 +203,44 @@ const LandingPage = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-          {/* Tesla "Rickshaw" — zooms in from right */}
-          <div ref={teslaRef} className="mb-8">
-            <div className="relative inline-block">
-              {/* Glow behind Tesla */}
-              <div className="absolute inset-0 blur-3xl bg-red-500/20 rounded-full scale-150" />
+          {/* Tesla "Rickshaw" — zooms in from right like a rocket */}
+          <div ref={teslaRef} className="mb-8 relative inline-block max-w-xl mx-auto px-4">
+            {/* Outer dynamic aura & speed glow */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-red-600 via-emerald-500 to-cyan-500 rounded-3xl blur-2xl opacity-40 animate-pulse pointer-events-none" />
 
-              {/* Battery Rickshaw SVG — The Dhaka "Tesla" */}
-              <svg width="280" height="160" viewBox="0 0 280 160" className="relative drop-shadow-2xl">
-                <defs>
-                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: '#dc2626', stopOpacity: 1 }} />
-                  </linearGradient>
-                  <linearGradient id="canopyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: '#b91c1c', stopOpacity: 1 }} />
-                  </linearGradient>
-                  <linearGradient id="seatGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: '#1e293b', stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: '#0f172a', stopOpacity: 1 }} />
-                  </linearGradient>
-                </defs>
+            {/* Rickshaw Hero Card */}
+            <div className="relative rounded-2xl overflow-hidden border-2 border-red-500/60 shadow-[0_0_50px_rgba(239,68,68,0.3)] bg-slate-900/90 backdrop-blur-md">
+              <img
+                src="/tesla-bullet-rickshaw.jpg"
+                alt="Jashim's Tesla Bullet - Dhaka Battery-Powered Rickshaw"
+                className="w-full h-auto max-h-[340px] object-cover rounded-xl"
+              />
 
-                {/* Ground shadow */}
-                <ellipse cx="150" cy="145" rx="100" ry="8" fill="rgba(239, 68, 68, 0.15)" />
-
-                {/* === BACK SECTION (Passenger area) === */}
-                {/* Rear frame / body base */}
-                <rect x="100" y="85" width="120" height="35" rx="4" fill="url(#bodyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
-
-                {/* Passenger seat */}
-                <rect x="110" y="75" width="100" height="15" rx="3" fill="url(#seatGrad)" stroke="#334155" strokeWidth="1" />
-                {/* Seat back */}
-                <rect x="200" y="50" width="10" height="40" rx="3" fill="url(#seatGrad)" stroke="#334155" strokeWidth="1" />
-
-                {/* Canopy / Roof — the iconic rickshaw hood */}
-                <path d="M105,50 Q110,10 155,8 Q200,6 215,50" fill="url(#canopyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
-                {/* Canopy support poles */}
-                <line x1="108" y1="50" x2="108" y2="85" stroke="#fbbf24" strokeWidth="2" />
-                <line x1="212" y1="50" x2="212" y2="85" stroke="#fbbf24" strokeWidth="2" />
-                {/* Canopy top trim */}
-                <path d="M105,50 L215,50" stroke="#fbbf24" strokeWidth="2" />
-
-                {/* Canopy decorative fringe */}
-                {[...Array(12)].map((_, i) => (
-                  <line key={i} x1={108 + i * 9} y1="50" x2={112 + i * 9} y2="56" stroke="#fbbf24" strokeWidth="1" opacity="0.6" />
-                ))}
-
-                {/* Tesla T logo on canopy */}
-                <text x="160" y="38" textAnchor="middle" fill="white" fontSize="18" fontWeight="bold" fontFamily="Arial">T</text>
-                {/* TESLA text on body */}
-                <text x="160" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="Arial" letterSpacing="3">TESLA</text>
-
-                {/* === FRONT SECTION (Driver area) === */}
-                {/* Driver platform / handlebar area */}
-                <rect x="40" y="85" width="65" height="30" rx="3" fill="url(#bodyGrad)" stroke="#b91c1c" strokeWidth="1.5" />
-
-                {/* Handlebar */}
-                <line x1="55" y1="75" x2="55" y2="88" stroke="#94a3b8" strokeWidth="3" />
-                <line x1="42" y1="75" x2="68" y2="75" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
-                {/* Handlebar grips */}
-                <circle cx="42" cy="75" r="3" fill="#475569" />
-                <circle cx="68" cy="75" r="3" fill="#475569" />
-
-                {/* Headlight */}
-                <circle cx="40" cy="95" r="5" fill="#fbbf24" opacity="0.9" />
-                <circle cx="40" cy="95" r="9" fill="#fbbf24" opacity="0.15" />
-
-                {/* Battery box (under driver seat) */}
-                <rect x="60" y="100" width="35" height="12" rx="2" fill="#1e40af" stroke="#3b82f6" strokeWidth="1" />
-                <text x="77" y="110" textAnchor="middle" fill="#93c5fd" fontSize="6" fontFamily="Arial">⚡BATTERY</text>
-
-                {/* Connection rod between front and back */}
-                <rect x="95" y="95" width="10" height="8" fill="#991b1b" />
-
-                {/* === WHEELS (3 wheels — 1 front, 2 back) === */}
-                {/* Front wheel (single) */}
-                <circle cx="50" cy="130" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
-                <circle cx="50" cy="130" r="8" fill="#334155" />
-                <circle cx="50" cy="130" r="3" fill="#64748b" />
-                {/* Spokes */}
-                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                  <line key={i} x1="50" y1="130" x2={50 + 14 * Math.cos(angle * Math.PI / 180)} y2={130 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
-                ))}
-
-                {/* Fork connecting front wheel to frame */}
-                <line x1="50" y1="114" x2="50" y2="85" stroke="#94a3b8" strokeWidth="3" />
-
-                {/* Rear left wheel */}
-                <circle cx="130" cy="135" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
-                <circle cx="130" cy="135" r="8" fill="#334155" />
-                <circle cx="130" cy="135" r="3" fill="#64748b" />
-                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                  <line key={`bl${i}`} x1="130" y1="135" x2={130 + 14 * Math.cos(angle * Math.PI / 180)} y2={135 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
-                ))}
-
-                {/* Rear right wheel */}
-                <circle cx="195" cy="135" r="16" fill="#1e293b" stroke="#475569" strokeWidth="3" />
-                <circle cx="195" cy="135" r="8" fill="#334155" />
-                <circle cx="195" cy="135" r="3" fill="#64748b" />
-                {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                  <line key={`br${i}`} x1="195" y1="135" x2={195 + 14 * Math.cos(angle * Math.PI / 180)} y2={135 + 14 * Math.sin(angle * Math.PI / 180)} stroke="#475569" strokeWidth="1" />
-                ))}
-
-                {/* Rear axle */}
-                <line x1="130" y1="120" x2="130" y2="135" stroke="#94a3b8" strokeWidth="2" />
-                <line x1="195" y1="120" x2="195" y2="135" stroke="#94a3b8" strokeWidth="2" />
-
-                {/* Speed trail / electric sparks behind */}
-                <path d="M225,100 L245,97 L240,100 L255,97 L250,100 L265,97" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.5" />
-                <path d="M225,110 L250,107 L245,110 L270,107" stroke="#22c55e" strokeWidth="1.5" fill="none" opacity="0.4" />
-                <path d="M220,105 L240,103 L238,105 L260,102" stroke="#60a5fa" strokeWidth="1" fill="none" opacity="0.3" />
-
-                {/* Passenger silhouettes on seat */}
-                <circle cx="140" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
-                <circle cx="160" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
-                <circle cx="180" cy="65" r="6" fill="#94a3b8" opacity="0.5" />
-              </svg>
-
-              {/* "Bullet" label */}
-              <div className="mt-3 text-red-400 text-sm font-mono tracking-widest">
-                ⚡ BULLET — 3 Seats ⚡
+              {/* Floating Live Spec Badge */}
+              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/85 backdrop-blur-md px-4 py-2 rounded-xl border border-red-500/40">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-3 w-3 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  <span className="text-white font-black text-sm tracking-wider uppercase">Jashim's "Tesla" Bullet</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-red-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-red-950/60 border border-red-800">
+                    🛺 3-WHEELER
+                  </span>
+                  <span className="text-cyan-400 font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800">
+                    ⚡ 3 SEATS • 100% BATTERY
+                  </span>
+                </div>
               </div>
-              <div className="text-gray-500 text-xs mt-1">Jashim's Battery-Powered "Tesla"</div>
+            </div>
+
+            {/* Bullet subtitle */}
+            <div className="mt-3 flex items-center justify-center gap-2 text-xs font-mono text-gray-400">
+              <span className="text-red-400 font-semibold">⚡ The Legendary Dhaka Battery Rickshaw</span>
+              <span>•</span>
+              <span className="text-gray-300">Fast, Electric & Traffic-Proof</span>
             </div>
           </div>
 
