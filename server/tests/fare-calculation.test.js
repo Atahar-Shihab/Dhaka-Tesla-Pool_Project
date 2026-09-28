@@ -3,7 +3,7 @@ process.env.JWT_SECRET = 'dhaka-tesla-pool-secret-key-2026';
 process.env.JWT_EXPIRES_IN = '7d';
 process.env.PORT = '0';
 
-const { describe, it, expect } = require('vitest');
+// vitest globals (describe, it, expect) are auto-injected via vitest.config.mjs
 const { calculateFare, formatFare } = require('../src/utils/fareCalculator');
 
 describe('Fare Calculation', () => {

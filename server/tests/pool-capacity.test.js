@@ -3,7 +3,7 @@ process.env.JWT_SECRET = 'dhaka-tesla-pool-secret-key-2026';
 process.env.JWT_EXPIRES_IN = '7d';
 process.env.PORT = '0';
 
-const { describe, it, expect, beforeAll, afterAll } = require('vitest');
+// vitest globals (describe, it, expect, etc.) are auto-injected via vitest.config.mjs
 const request = require('supertest');
 const { app, prisma } = require('./setup');
 
@@ -29,7 +29,7 @@ describe('Pool Capacity Critical Test', () => {
 
     for (let key of Object.keys(tokens)) {
       const me = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${tokens[key]}`);
-      users[key] = me.body.data;
+      users[key] = me.body.user || me.body.data;
     }
 
     // Set up vehicle capacity to 3 for Jashim
@@ -64,16 +64,25 @@ describe('Pool Capacity Critical Test', () => {
   });
 
   afterAll(async () => {
+    // Delete payments first (foreign key constraint)
+    await prisma.payment.deleteMany({});
+    // Disconnect pools from rides
+    await prisma.rideRequest.updateMany({ data: { poolId: null } });
     // Cleanup pools for Jashim
-    await prisma.pool.deleteMany({ where: { driverId: users.jashim.id } });
-    await prisma.rideRequest.deleteMany({ 
-      where: { passengerId: { in: [users.nusrat.id, users.rafiq.id, users.shirin.id, users.fourth.id] } } 
-    });
+    if (users.jashim) {
+      await prisma.pool.deleteMany({ where: { driverId: users.jashim.id } });
+    }
+    const passengerIds = [users.nusrat?.id, users.rafiq?.id, users.shirin?.id, users.fourth?.id].filter(Boolean);
+    if (passengerIds.length > 0) {
+      await prisma.rideRequest.deleteMany({ 
+        where: { passengerId: { in: passengerIds } } 
+      });
+    }
   });
 
   const requestRide = async (token) => {
     const res = await request(app)
-      .post('/api/rides/request')
+      .post('/api/rides')
       .set('Authorization', `Bearer ${token}`)
       .send({ pickupLocationId: loc1.id, dropoffLocationId: loc2.id, seatsNeeded: 1 });
     return res.body.data.id;

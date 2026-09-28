@@ -3,7 +3,7 @@ process.env.JWT_SECRET = 'dhaka-tesla-pool-secret-key-2026';
 process.env.JWT_EXPIRES_IN = '7d';
 process.env.PORT = '0';
 
-const { describe, it, expect, beforeAll, afterAll } = require('vitest');
+// vitest globals (describe, it, expect, etc.) are auto-injected via vitest.config.mjs
 const request = require('supertest');
 const { app, prisma } = require('./setup');
 
@@ -51,7 +51,11 @@ describe('Ride Lifecycle', () => {
   });
 
   afterAll(async () => {
-    // Cleanup rides and pools for Jashim
+    // Delete payments first (foreign key to RideRequest)
+    await prisma.payment.deleteMany({});
+    // Disconnect pools from rides
+    await prisma.rideRequest.updateMany({ data: { poolId: null } });
+    // Cleanup pools for Jashim
     const d = await prisma.user.findUnique({ where: { email: 'jashim@teslapool.com' } });
     if(d) {
       await prisma.pool.deleteMany({ where: { driverId: d.id } });
@@ -64,7 +68,7 @@ describe('Ride Lifecycle', () => {
 
   it('passenger can create a ride request (status = REQUESTED)', async () => {
     const res = await request(app)
-      .post('/api/rides/request')
+      .post('/api/rides')
       .set('Authorization', `Bearer ${passengerToken}`)
       .send({ pickupLocationId: loc1.id, dropoffLocationId: loc2.id, seatsNeeded: 1 });
 
@@ -100,7 +104,7 @@ describe('Ride Lifecycle', () => {
 
   it('passenger can create another request for remaining tests', async () => {
     const res = await request(app)
-      .post('/api/rides/request')
+      .post('/api/rides')
       .set('Authorization', `Bearer ${passengerToken}`)
       .send({ pickupLocationId: loc1.id, dropoffLocationId: loc2.id, seatsNeeded: 1 });
 
@@ -147,7 +151,7 @@ describe('Ride Lifecycle', () => {
 
   it('invalid state transition is rejected (e.g. REQUESTED -> COMPLETED directly)', async () => {
     const reqRes = await request(app)
-      .post('/api/rides/request')
+      .post('/api/rides')
       .set('Authorization', `Bearer ${passengerToken}`)
       .send({ pickupLocationId: loc1.id, dropoffLocationId: loc2.id, seatsNeeded: 1 });
       
