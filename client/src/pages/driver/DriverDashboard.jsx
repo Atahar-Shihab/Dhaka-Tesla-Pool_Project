@@ -1,171 +1,182 @@
-/**
- * DriverDashboard.jsx
- * Dashboard for drivers to view stats, toggle status, and manage active pool.
- */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import { Power, Car, Users, History, AlertCircle } from 'lucide-react';
-import LoadingSpinner from '../../components/LoadingSpinner';
 import { formatFare } from '../../utils/helpers';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import StatusBadge from '../../components/StatusBadge';
+import { Power, Car, History, Users, ChevronRight, MapPin } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const DriverDashboard = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [isOnline, setIsOnline] = useState(false);
-  const [activePool, setActivePool] = useState(null);
-  const [stats, setStats] = useState({ todayCompleted: 0, earnings: 0 });
-
-  const fetchDashboardData = async () => {
-    try {
-      // Get driver status
-      const statusRes = await api.get('/driver/status');
-      setIsOnline(statusRes.data.isOnline);
-      
-      // Get active pool if any
-      if (statusRes.data.activePoolId) {
-        const poolRes = await api.get(`/driver/pool/${statusRes.data.activePoolId}`);
-        setActivePool(poolRes.data);
-      } else {
-        setActivePool(null);
-      }
-      
-      // In a real app, we'd fetch actual daily stats here
-      // For now we just mock or use history
-      const historyRes = await api.get('/driver/history');
-      let earnings = 0;
-      let completed = 0;
-      
-      historyRes.data.forEach(pool => {
-        if (pool.status === 'COMPLETED') {
-          completed++;
-          pool.rides.forEach(r => { if(r.status === 'COMPLETED') earnings += r.fare });
-        }
-      });
-      setStats({ todayCompleted: completed, earnings });
-
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate();
+  const [isActive, setIsActive] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const [stats, setStats] = useState({ totalEarned: 0, completedPools: 0 });
+  const [currentPool, setCurrentPool] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
+    const fetchDriverData = async () => {
+      try {
+        // Fetch current user status
+        const meRes = await api.get('/auth/me');
+        setIsActive(meRes.data.isActive || false);
+
+        // Fetch driver history for stats
+        const historyRes = await api.get('/driver/history');
+        const pools = historyRes.data || [];
+        
+        const completed = pools.filter(p => p.status === 'COMPLETED');
+        const earned = completed.reduce((sum, pool) => {
+          const poolEarnings = pool.rides.reduce((rSum, ride) => rSum + (Number(ride.fare) || 0), 0);
+          return sum + poolEarnings;
+        }, 0);
+
+        setStats({
+          completedPools: completed.length,
+          totalEarned: earned
+        });
+
+        // Check if there is an active pool
+        const activePool = pools.find(p => ['OPEN', 'IN_PROGRESS'].includes(p.status));
+        setCurrentPool(activePool || null);
+
+      } catch (error) {
+        toast.error('Failed to load dashboard data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDriverData();
   }, []);
 
-  const toggleStatus = async () => {
+  const handleToggleStatus = async () => {
+    setIsToggling(true);
     try {
-      const response = await api.patch('/driver/status', { isOnline: !isOnline });
-      setIsOnline(response.data.isOnline);
-      toast.success(response.data.isOnline ? 'You are now online' : 'You are now offline');
+      const res = await api.patch('/driver/status', { isActive: !isActive });
+      setIsActive(res.data.isActive);
+      toast.success(res.data.isActive ? 'You are now online' : 'You are now offline');
     } catch (error) {
       toast.error('Failed to update status');
+    } finally {
+      setIsToggling(false);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome, Driver {user.name}! 🚘</h1>
-          <p className="text-gray-600 mt-1 flex items-center">
-            Vehicle: <span className="font-semibold ml-1">Tesla Bullet</span> (Max Capacity: 4)
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* Status Toggle */}
-        <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm flex items-center space-x-3">
-          <span className="text-sm font-medium text-gray-700">Status:</span>
-          <button 
-            onClick={toggleStatus}
-            className={`flex items-center px-4 py-2 rounded-md text-white font-medium transition-colors ${isOnline ? 'bg-tesla-600 hover:bg-tesla-700' : 'bg-gray-400 hover:bg-gray-500'}`}
+        {/* Header & Toggle */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Driver Portal</h1>
+            <p className="text-gray-400 mt-1">Welcome back, {user?.name?.split(' ')[0]}</p>
+          </div>
+
+          <button
+            onClick={handleToggleStatus}
+            disabled={isToggling}
+            className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-all shadow-lg ${
+              isActive 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white shadow-green-500/20'
+                : 'bg-slate-800 border border-slate-700 text-gray-300 hover:bg-slate-700'
+            }`}
           >
-            <Power size={18} className="mr-2" />
-            {isOnline ? 'Online' : 'Offline'}
+            <Power className="w-5 h-5" />
+            {isToggling ? 'Updating...' : isActive ? 'Online - Go Offline' : 'Offline - Go Online'}
           </button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content Area */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Active Pool Alert */}
-          {activePool ? (
-            <div className="bg-white border-2 border-tesla-500 rounded-xl p-6 shadow-md">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <Car className="mr-2 text-tesla-600" /> Active Pool
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">Pool ID: {activePool.id}</p>
+        {/* Vehicle Info */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+              <Car className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Your Vehicle</h2>
+              <p className="text-gray-400 text-sm">Tesla Model 3 (Black)</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-sm text-gray-500">Plate Number</p>
+              <p className="text-white font-medium mt-1">DHA-1234</p>
+            </div>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-sm text-gray-500">Max Capacity</p>
+              <p className="text-white font-medium mt-1">3 Seats</p>
+            </div>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-sm text-gray-500">Completed Trips</p>
+              <p className="text-white font-medium mt-1">{stats.completedPools}</p>
+            </div>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-sm text-gray-500">Total Earnings</p>
+              <p className="text-green-400 font-bold mt-1">{formatFare(stats.totalEarned)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Active Pool Card */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Current Status</h2>
+            {currentPool ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <StatusBadge status={currentPool.status} />
+                  <span className="text-gray-400 text-sm">{currentPool.rides?.length || 0} Passengers</span>
                 </div>
-                <StatusBadge status={activePool.status} />
-              </div>
-              
-              <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">Capacity Filled:</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {activePool.occupiedSeats} / {activePool.capacity} seats
-                </span>
-              </div>
-              
-              <Link to={`/driver/pool/${activePool.id}`} className="w-full block text-center bg-tesla-600 hover:bg-tesla-700 text-white py-3 rounded-lg font-medium transition">
-                Manage Current Pool
-              </Link>
-            </div>
-          ) : (
-            <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8 text-center flex flex-col items-center justify-center h-full min-h-[200px]">
-              <AlertCircle size={48} className="text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No Active Pool</h3>
-              <p className="text-gray-500 mb-6">You don't have any ongoing trips right now.</p>
-              {isOnline ? (
-                <Link to="/driver/requests" className="bg-tesla-600 hover:bg-tesla-700 text-white px-6 py-2 rounded-md font-medium transition">
-                  Find Requests
+                <Link 
+                  to={`/driver/pool/${currentPool.id}`}
+                  className="w-full flex items-center justify-center py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-xl transition-all font-medium"
+                >
+                  Manage Current Pool
                 </Link>
-              ) : (
-                <button onClick={toggleStatus} className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-md font-medium transition">
-                  Go Online First
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar / Stats */}
-        <div className="space-y-6">
-          <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                <span className="text-gray-600 flex items-center"><History size={18} className="mr-2" /> Total Pools</span>
-                <span className="font-semibold">{stats.todayCompleted}</span>
               </div>
-              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                <span className="text-gray-600 flex items-center"><Car size={18} className="mr-2" /> Est. Earnings</span>
-                <span className="font-semibold text-tesla-600">{formatFare(stats.earnings)}</span>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-gray-400 mb-4">No active pool right now.</p>
+                <Link 
+                  to="/driver/requests"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-xl shadow-lg shadow-green-500/20"
+                >
+                  <Users className="w-5 h-5" /> View Ride Requests
+                </Link>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Navigation</h3>
+          {/* Quick Links */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <Link to="/driver/requests" className="flex items-center text-gray-700 hover:text-tesla-600 p-2 rounded-lg hover:bg-gray-50 transition">
-                <Users className="mr-3" size={20} /> Browse Requests
+              <Link to="/driver/requests" className="flex items-center justify-between p-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 rounded-xl transition-colors">
+                <div className="flex items-center gap-3 text-white">
+                  <MapPin className="w-5 h-5 text-red-400" /> Browse Available Requests
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
               </Link>
-              <Link to="/driver/history" className="flex items-center text-gray-700 hover:text-tesla-600 p-2 rounded-lg hover:bg-gray-50 transition">
-                <History className="mr-3" size={20} /> View History
+              <Link to="/driver/history" className="flex items-center justify-between p-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 rounded-xl transition-colors">
+                <div className="flex items-center gap-3 text-white">
+                  <History className="w-5 h-5 text-blue-400" /> View Ride History
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
               </Link>
             </div>
           </div>
+          
         </div>
+
       </div>
     </div>
   );

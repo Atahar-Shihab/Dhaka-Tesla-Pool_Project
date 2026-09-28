@@ -1,106 +1,116 @@
-/**
- * DriverHistory.jsx
- * Displays a history of all past pools managed by the driver.
- */
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { formatDate, formatFare } from '../../utils/helpers';
-import StatusBadge from '../../components/StatusBadge';
+import { formatFare, formatDate } from '../../utils/helpers';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { History, Users } from 'lucide-react';
+import StatusBadge from '../../components/StatusBadge';
+import { History, Users, ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const DriverHistory = () => {
   const [pools, setPools] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await api.get('/driver/history');
-        setPools(response.data);
+        const res = await api.get('/driver/history');
+        // Sort descending
+        const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setPools(sorted);
       } catch (error) {
-        console.error("Error fetching history", error);
+        toast.error('Failed to load history');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     fetchHistory();
   }, []);
 
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-          <History className="mr-2" /> Driving History
-        </h1>
-        <p className="text-gray-600 mt-1">Review your past pools and rides.</p>
-      </div>
-
-      {pools.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <History className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <p className="text-lg text-gray-500">You haven't completed any pools yet.</p>
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-5xl mx-auto">
+        
+        <div className="mb-8 flex items-center gap-3">
+          <History className="w-8 h-8 text-blue-400" />
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-1">Ride History</h1>
+            <p className="text-gray-400">View your past pools and earnings.</p>
+          </div>
         </div>
-      ) : (
-        <div className="space-y-6">
-          {pools.map(pool => {
-            // Calculate total earnings from completed rides in this pool
-            const totalEarnings = pool.rides
-              .filter(r => r.status === 'COMPLETED')
-              .reduce((sum, r) => sum + r.fare, 0);
 
-            return (
-              <div key={pool.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4">
-                  <div>
-                    <h3 className="font-bold text-gray-900">Pool #{pool.id}</h3>
-                    <p className="text-xs text-gray-500">{formatDate(pool.createdAt)}</p>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">Earnings</p>
-                      <p className="font-bold text-tesla-600">{formatFare(totalEarnings)}</p>
+        {pools.length > 0 ? (
+          <div className="space-y-6">
+            {pools.map((pool) => {
+              // Calculate total earnings and seats for this pool
+              const totalEarned = pool.rides?.reduce((sum, ride) => sum + (Number(ride.fare) || 0), 0) || 0;
+              const totalPassengers = pool.rides?.length || 0;
+
+              return (
+                <div key={pool.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+                  
+                  {/* Pool Header */}
+                  <div className="bg-slate-800/30 p-5 border-b border-slate-800 flex flex-wrap justify-between items-center gap-4">
+                    <div className="flex items-center gap-4">
+                      <StatusBadge status={pool.status} />
+                      <span className="text-gray-400 text-sm">{formatDate(pool.createdAt)}</span>
                     </div>
-                    <StatusBadge status={pool.status} />
+                    <div className="flex gap-6">
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500 uppercase">Passengers</p>
+                        <p className="text-white font-medium flex items-center justify-end gap-1">
+                          <Users className="w-4 h-4" /> {totalPassengers}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500 uppercase">Total Earned</p>
+                        <p className="text-green-400 font-bold">{formatFare(totalEarned)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pool Rides */}
+                  <div className="p-5 divide-y divide-slate-800/50">
+                    {pool.rides?.map(ride => (
+                      <div key={ride.id} className="py-4 first:pt-0 last:pb-0 flex flex-col md:flex-row justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="font-medium text-white">{ride.passenger?.name || 'Passenger'}</span>
+                            <span className="text-gray-500 text-sm">• {ride.seats} Seat{ride.seats > 1 ? 's' : ''}</span>
+                            <span className="ml-2 scale-75 origin-left"><StatusBadge status={ride.status} /></span>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-gray-400">{ride.pickupLocation?.name}</span>
+                            <ArrowRight className="w-4 h-4 text-gray-600" />
+                            <span className="text-gray-400">{ride.dropoffLocation?.name}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="text-right flex items-center md:items-start">
+                          <span className="text-gray-300 font-medium">{formatFare(ride.fare)}</span>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {(!pool.rides || pool.rides.length === 0) && (
+                      <p className="text-gray-500 text-sm py-2">No completed rides in this pool.</p>
+                    )}
                   </div>
                 </div>
-                
-                <div className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                    <Users size={16} className="mr-2" /> Passengers ({pool.rides.length})
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-100">
-                      <thead>
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs text-gray-500 font-medium">Passenger</th>
-                          <th className="px-3 py-2 text-left text-xs text-gray-500 font-medium">Route</th>
-                          <th className="px-3 py-2 text-left text-xs text-gray-500 font-medium">Status</th>
-                          <th className="px-3 py-2 text-right text-xs text-gray-500 font-medium">Fare</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {pool.rides.map(ride => (
-                          <tr key={ride.id}>
-                            <td className="px-3 py-2 text-sm text-gray-900">{ride.passenger?.name}</td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {ride.pickupLocation?.name} → {ride.destinationLocation?.name}
-                            </td>
-                            <td className="px-3 py-2"><StatusBadge status={ride.status} /></td>
-                            <td className="px-3 py-2 text-right text-sm font-medium">{formatFare(ride.fare)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
+            <History className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-white mb-2">No History Yet</h3>
+            <p className="text-gray-400">Complete some pools to see them appear here.</p>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };

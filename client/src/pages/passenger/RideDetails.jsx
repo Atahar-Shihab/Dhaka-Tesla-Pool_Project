@@ -1,149 +1,144 @@
-/**
- * RideDetails.jsx
- * Displays details for a specific ride request.
- * Allows passenger to cancel if not yet picked up.
- */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { MapPin, Navigation, User, Car, CheckCircle, AlertCircle } from 'lucide-react';
-import StatusBadge from '../../components/StatusBadge';
 import { formatFare, formatDate } from '../../utils/helpers';
+import StatusBadge from '../../components/StatusBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { MapPin, Navigation, User, Car, XCircle, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const RideDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [ride, setRide] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [cancelling, setCancelling] = useState(false);
-
-  const fetchRideDetails = async () => {
-    try {
-      const response = await api.get(`/rides/${id}`);
-      setRide(response.data);
-    } catch (error) {
-      toast.error('Failed to load ride details');
-      navigate('/passenger/rides');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
-    fetchRideDetails();
-    // In a real app, we might poll here or use WebSockets for live updates
-    const interval = setInterval(fetchRideDetails, 10000); // Poll every 10s
-    return () => clearInterval(interval);
+    const fetchRide = async () => {
+      try {
+        const res = await api.get(`/rides/${id}`);
+        setRide(res.data);
+      } catch (error) {
+        toast.error('Failed to load ride details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRide();
   }, [id]);
 
   const handleCancel = async () => {
     if (!window.confirm('Are you sure you want to cancel this ride?')) return;
     
-    setCancelling(true);
     try {
-      await api.post(`/rides/${id}/cancel`);
-      toast.success('Ride cancelled');
-      fetchRideDetails();
+      setIsCancelling(true);
+      const res = await api.patch(`/rides/${id}/cancel`);
+      setRide(res.data);
+      toast.success('Ride cancelled successfully');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to cancel ride');
     } finally {
-      setCancelling(false);
+      setIsCancelling(false);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (!ride) return null;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
+  if (!ride) return <div className="pt-20 text-center text-gray-400">Ride not found</div>;
 
-  const canCancel = ['REQUESTED', 'MATCHED'].includes(ride.status);
+  const canCancel = ride.status === 'REQUESTED' || ride.status === 'MATCHED';
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-2xl mx-auto">
+        
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Ride Details</h2>
-            <p className="text-xs text-gray-500 mt-1">ID: {ride.id} • {formatDate(ride.createdAt)}</p>
-          </div>
+        <div className="mb-6 flex items-center justify-between">
+          <button 
+            onClick={() => navigate('/passenger/rides')}
+            className="flex items-center text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" /> Back
+          </button>
           <StatusBadge status={ride.status} />
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Route Info */}
-          <div className="relative pl-8 space-y-6">
-            <div className="absolute top-2 left-3 w-0.5 h-16 bg-gray-200"></div>
-            
-            <div className="relative">
-              <div className="absolute -left-8 top-0.5 bg-white p-1">
-                <div className="h-3 w-3 rounded-full bg-blue-500"></div>
+        {/* Main Card */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-8">
+          
+          {/* Timeline / Route */}
+          <div>
+            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Route Details</h2>
+            <div className="relative pl-6 space-y-6">
+              <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-slate-800"></div>
+              
+              <div className="relative">
+                <div className="absolute -left-[27px] w-4 h-4 bg-slate-950 border-4 border-green-500 rounded-full"></div>
+                <h3 className="text-white font-medium">{ride.pickupLocation?.name}</h3>
+                <p className="text-sm text-gray-400 mt-1">{ride.pickupLocation?.address}</p>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pickup</p>
-                <p className="text-lg font-medium text-gray-900">{ride.pickupLocation?.name}</p>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -left-8 top-0.5 bg-white p-1">
-                <div className="h-3 w-3 rounded-full bg-green-500"></div>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Destination</p>
-                <p className="text-lg font-medium text-gray-900">{ride.destinationLocation?.name}</p>
+              
+              <div className="relative">
+                <div className="absolute -left-[27px] w-4 h-4 bg-slate-950 border-4 border-red-500 rounded-full"></div>
+                <h3 className="text-white font-medium">{ride.dropoffLocation?.name}</h3>
+                <p className="text-sm text-gray-400 mt-1">{ride.dropoffLocation?.address}</p>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-4">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Trip Information</h3>
-            <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
-              <div>
-                <p className="text-xs text-gray-500">Seats Needed</p>
-                <p className="font-semibold text-gray-900">{ride.seatsNeeded}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Total Fare</p>
-                <p className="font-semibold text-primary-700 text-lg">{formatFare(ride.fare)}</p>
-              </div>
+          <div className="border-t border-slate-800"></div>
+
+          {/* Fare & Info */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Total Fare</p>
+              <p className="text-2xl font-bold text-white">{formatFare(ride.fare)}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Seats Booked</p>
+              <p className="text-lg text-white">{ride.seats} Seat{ride.seats > 1 ? 's' : ''}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Date</p>
+              <p className="text-sm text-white">{formatDate(ride.createdAt)}</p>
             </div>
           </div>
 
-          {/* Driver & Pool Info (if matched) */}
-          {ride.pool && (
-            <div className="border-t border-gray-100 pt-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-3">Driver Information</h3>
-              <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-white">
-                <div className="h-12 w-12 rounded-full bg-tesla-100 text-tesla-600 flex items-center justify-center mr-4">
-                  <User size={24} />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{ride.pool.driver?.name}</p>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <Car size={16} className="mr-1" />
-                    <span>Tesla Pool ({ride.pool.occupiedSeats}/{ride.pool.capacity} seats full)</span>
+          {/* Driver Info if matched */}
+          {ride.pool && ride.pool.driver && (
+            <>
+              <div className="border-t border-slate-800"></div>
+              <div>
+                <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Driver Details</h2>
+                <div className="flex items-center gap-4 bg-slate-800/30 p-4 rounded-xl border border-slate-800">
+                  <div className="p-3 bg-slate-800 rounded-full text-gray-400">
+                    <User className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">{ride.pool.driver.name}</p>
+                    <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
+                      <Car className="w-4 h-4" /> {ride.pool.vehicleModel} ({ride.pool.vehicleColor})
+                    </p>
                   </div>
                 </div>
               </div>
+            </>
+          )}
+
+          {/* Cancel Action */}
+          {canCancel && (
+            <div className="pt-4">
+              <button
+                onClick={handleCancel}
+                disabled={isCancelling}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl transition-all disabled:opacity-50 font-medium"
+              >
+                <XCircle className="w-5 h-5" />
+                {isCancelling ? 'Cancelling...' : 'Cancel Ride'}
+              </button>
             </div>
           )}
 
-          {/* Actions */}
-          {canCancel && (
-            <div className="border-t border-gray-100 pt-6">
-              <button
-                onClick={handleCancel}
-                disabled={cancelling}
-                className="w-full flex justify-center py-2.5 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                {cancelling ? 'Cancelling...' : 'Cancel Ride'}
-              </button>
-              <p className="text-xs text-center text-gray-500 mt-2">
-                You can cancel without penalty before the driver arrives.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
