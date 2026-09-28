@@ -14,29 +14,36 @@ export const ThemeProvider = ({ children }) => {
     return localStorage.getItem('dhaka_tesla_theme') || 'light';
   });
 
-  useEffect(() => {
+  const applyThemeToDOM = (newTheme) => {
     const root = document.documentElement;
     const body = document.body;
-    if (theme === 'dark') {
+    if (newTheme === 'dark') {
       root.classList.add('dark');
+      root.setAttribute('data-theme', 'dark');
       if (body) {
         body.classList.add('dark');
         body.setAttribute('data-theme', 'dark');
       }
-      root.setAttribute('data-theme', 'dark');
     } else {
       root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
       if (body) {
         body.classList.remove('dark');
         body.setAttribute('data-theme', 'light');
       }
-      root.setAttribute('data-theme', 'light');
     }
+  };
+
+  useEffect(() => {
+    applyThemeToDOM(theme);
     localStorage.setItem('dhaka_tesla_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    applyThemeToDOM(newTheme);
+    setTheme(newTheme);
+    localStorage.setItem('dhaka_tesla_theme', newTheme);
   };
 
   return (
