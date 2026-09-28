@@ -888,73 +888,77 @@ const LandingPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
             {/* Jashim */}
-            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-lg mb-4">
+            <div className="group relative bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-red-200 dark:hover:border-red-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-transparent group-hover:from-red-500/5 dark:group-hover:from-red-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center font-bold text-lg mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:rotate-3 transition-all duration-300">
                   🛺
                 </div>
                 <span className="text-xs font-mono uppercase text-red-600 dark:text-red-400 font-bold block mb-1">Driver</span>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Jashim</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Jashim</h3>
                 <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
                   Pilot of Bullet. Leaning against his 3-seat electric rickshaw on Road 11. 
                   Accepts riders heading in the same direction and triggers pool creation.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <div className="relative z-10 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:border-red-200 dark:group-hover:border-red-500/30 transition-colors">
                 Vehicle: <strong className="text-red-600 dark:text-red-400">Bullet (3 Seats)</strong>
               </div>
             </div>
 
             {/* Nusrat */}
-            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg mb-4">
+            <div className="group relative bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-emerald-200 dark:hover:border-emerald-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-transparent group-hover:from-emerald-500/5 dark:group-hover:from-emerald-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:-rotate-3 transition-all duration-300">
                   👩‍💼
                 </div>
                 <span className="text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold block mb-1">Passenger 1</span>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Nusrat</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Nusrat</h3>
                 <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
                   Already late for work in Mohakhali. Requests 1 seat from Banani. 
                   Gets matched with Jashim and claims Seat 1 of 3.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <div className="relative z-10 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:border-emerald-200 dark:group-hover:border-emerald-500/30 transition-colors">
                 Route: <strong className="text-emerald-600 dark:text-emerald-400">Banani ➔ Mohakhali</strong>
               </div>
             </div>
 
             {/* Rafiq */}
-            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-cyan-500/10 border border-teal-200 dark:border-cyan-500/20 text-teal-600 dark:text-cyan-400 flex items-center justify-center font-bold text-lg mb-4">
+            <div className="group relative bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-teal-200 dark:hover:border-cyan-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/0 to-transparent group-hover:from-teal-500/5 dark:group-hover:from-cyan-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-cyan-500/10 border border-teal-200 dark:border-cyan-500/20 text-teal-600 dark:text-cyan-400 flex items-center justify-center font-bold text-lg mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:rotate-3 transition-all duration-300">
                   👨‍💻
                 </div>
                 <span className="text-xs font-mono uppercase text-teal-600 dark:text-cyan-400 font-bold block mb-1">Passenger 2</span>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Rafiq</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-cyan-400 transition-colors">Rafiq</h3>
                 <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
                   Heading to Gulshan 1. Total stranger to Nusrat. Books 2 minutes later. 
                   Shares Bullet and enjoys the automatic 20% pool fare split.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <div className="relative z-10 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:border-teal-200 dark:group-hover:border-cyan-500/30 transition-colors">
                 Route: <strong className="text-teal-600 dark:text-cyan-400">Banani ➔ Gulshan 1</strong>
               </div>
             </div>
 
             {/* Shirin */}
-            <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-yellow-500/10 border border-amber-200 dark:border-yellow-500/20 text-amber-600 dark:text-yellow-400 flex items-center justify-center font-bold text-lg mb-4">
+            <div className="group relative bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-amber-200 dark:hover:border-yellow-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-transparent group-hover:from-amber-500/5 dark:group-hover:from-yellow-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-yellow-500/10 border border-amber-200 dark:border-yellow-500/20 text-amber-600 dark:text-yellow-400 flex items-center justify-center font-bold text-lg mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:-rotate-3 transition-all duration-300">
                   ⚡
                 </div>
                 <span className="text-xs font-mono uppercase text-amber-600 dark:text-yellow-400 font-bold block mb-1">Concurrency Edge</span>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Shirin</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition-colors">Shirin</h3>
                 <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
                   Tries to grab the last seat when Bullet is full. Tests our PostgreSQL row-level locking 
                   and capacity limit rejection.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <div className="relative z-10 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-500 dark:text-slate-400 group-hover:border-amber-200 dark:group-hover:border-yellow-500/30 transition-colors">
                 Edge: <strong className="text-amber-600 dark:text-yellow-400">No Double-Booking</strong>
               </div>
             </div>
@@ -980,39 +984,48 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center font-bold mb-4">
-                <Lock className="w-5 h-5" />
+            <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-red-200 dark:hover:border-red-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-transparent group-hover:from-red-500/5 dark:group-hover:from-red-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center font-bold mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:-rotate-6 transition-all duration-300">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">PostgreSQL Concurrency Shield</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
+                  When Bullet has 1 seat left and both Nusrat and Shirin attempt to book at the exact same millisecond, 
+                  our transaction utilizes <code className="text-red-600 dark:text-red-400 font-mono group-hover:bg-red-100 dark:group-hover:bg-red-900/30 rounded px-1 transition-colors">SELECT FOR UPDATE</code>. 
+                  Only one transaction succeeds; the other rolls back safely.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">PostgreSQL Concurrency Shield</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
-                When Bullet has 1 seat left and both Nusrat and Shirin attempt to book at the exact same millisecond, 
-                our transaction utilizes <code className="text-red-600 dark:text-red-400 font-mono">SELECT FOR UPDATE</code>. 
-                Only one transaction succeeds; the other rolls back safely.
-              </p>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4">
-                <DollarSign className="w-5 h-5" />
+            <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-emerald-200 dark:hover:border-emerald-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-transparent group-hover:from-emerald-500/5 dark:group-hover:from-emerald-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:rotate-6 transition-all duration-300">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Integer Poysha Accounting</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
+                  Money is never stored as floating-point decimals to avoid IEEE-754 rounding drift. 
+                  All fares, discounts, and payments are stored in integer poysha 
+                  (100 poysha = 1 BDT).
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Integer Poysha Accounting</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
-                Money is never stored as floating-point decimals to avoid IEEE-754 rounding drift. 
-                All fares, discounts, and payments are stored in integer poysha 
-                (100 poysha = 1 BDT).
-              </p>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-cyan-500/10 text-teal-600 dark:text-cyan-400 flex items-center justify-center font-bold mb-4">
-                <Shield className="w-5 h-5" />
+            <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-teal-200 dark:hover:border-cyan-500/30 transition-all duration-300 overflow-hidden cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/0 to-transparent group-hover:from-teal-500/5 dark:group-hover:from-cyan-500/10 transition-colors duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-cyan-500/10 text-teal-600 dark:text-cyan-400 flex items-center justify-center font-bold mb-4 group-hover:scale-110 group-hover:shadow-md group-hover:-rotate-6 transition-all duration-300">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-cyan-400 transition-colors">27/27 Passing Test Suite</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
+                  Automated tests verify Bullet's 3-seat limit, fare formula calculations, 
+                  ride cancellation rules, authorization role boundaries, and state machines.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">27/27 Passing Test Suite</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-xs mt-2 leading-relaxed">
-                Automated tests verify Bullet's 3-seat limit, fare formula calculations, 
-                ride cancellation rules, authorization role boundaries, and state machines.
-              </p>
             </div>
           </div>
         </div>
@@ -1053,18 +1066,19 @@ const LandingPage = () => {
             ].map((faq, i) => (
               <div
                 key={i}
-                className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
+                className="group relative bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300"
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 to-transparent group-hover:from-emerald-500/5 dark:group-hover:from-emerald-500/10 transition-colors duration-500 pointer-events-none" />
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                  className="relative z-10 w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-semibold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
                 >
                   <span className="text-sm sm:text-base">{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaq === i ? 'rotate-180 text-emerald-500' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-transform duration-300 ${openFaq === i ? 'rotate-180 text-emerald-500' : ''}`} />
                 </button>
                 {openFaq === i && (
-                  <div className="p-4 sm:p-5 pt-0 text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed border-t border-slate-200 dark:border-slate-800/60 mt-1">
+                  <div className="relative z-10 p-4 sm:p-5 pt-0 text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed border-t border-slate-200 dark:border-slate-800/60 mt-1">
                     {faq.a}
                   </div>
                 )}
