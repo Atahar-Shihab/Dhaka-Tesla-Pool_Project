@@ -7,7 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 
@@ -24,37 +24,45 @@ import AvailableRequests from './pages/driver/AvailableRequests';
 import PoolDetails from './pages/driver/PoolDetails';
 import DriverHistory from './pages/driver/DriverHistory';
 
+function AppContent() {
+  const { isDark } = useTheme();
+
+  return (
+    <div className={`min-h-screen flex flex-col ${isDark ? 'dark bg-[#090d16] text-slate-100' : 'bg-slate-50 text-slate-800'} transition-colors duration-200`}>
+      <Navbar />
+      <main className="flex-grow">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Passenger Routes */}
+          <Route path="/passenger/dashboard" element={<ProtectedRoute allowedRole="PASSENGER"><PassengerDashboard /></ProtectedRoute>} />
+          <Route path="/passenger/request-ride" element={<ProtectedRoute allowedRole="PASSENGER"><RequestRide /></ProtectedRoute>} />
+          <Route path="/passenger/rides" element={<ProtectedRoute allowedRole="PASSENGER"><MyRides /></ProtectedRoute>} />
+          <Route path="/passenger/rides/:id" element={<ProtectedRoute allowedRole="PASSENGER"><RideDetails /></ProtectedRoute>} />
+
+          {/* Driver Routes */}
+          <Route path="/driver/dashboard" element={<ProtectedRoute allowedRole="DRIVER"><DriverDashboard /></ProtectedRoute>} />
+          <Route path="/driver/requests" element={<ProtectedRoute allowedRole="DRIVER"><AvailableRequests /></ProtectedRoute>} />
+          <Route path="/driver/pool/:poolId" element={<ProtectedRoute allowedRole="DRIVER"><PoolDetails /></ProtectedRoute>} />
+          <Route path="/driver/history" element={<ProtectedRoute allowedRole="DRIVER"><DriverHistory /></ProtectedRoute>} />
+        </Routes>
+      </main>
+      <Toaster position="top-right" toastOptions={{ style: { background: isDark ? '#1e293b' : '#ffffff', color: isDark ? '#ffffff' : '#0f172a' } }} />
+      <ToastContainer theme={isDark ? "dark" : "light"} position="top-right" autoClose={3000} />
+    </div>
+  );
+}
+
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#090d16] text-slate-800 dark:text-slate-100 transition-colors duration-200">
-          <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-
-            {/* Passenger Routes */}
-            <Route path="/passenger/dashboard" element={<ProtectedRoute allowedRole="PASSENGER"><PassengerDashboard /></ProtectedRoute>} />
-            <Route path="/passenger/request-ride" element={<ProtectedRoute allowedRole="PASSENGER"><RequestRide /></ProtectedRoute>} />
-            <Route path="/passenger/rides" element={<ProtectedRoute allowedRole="PASSENGER"><MyRides /></ProtectedRoute>} />
-            <Route path="/passenger/rides/:id" element={<ProtectedRoute allowedRole="PASSENGER"><RideDetails /></ProtectedRoute>} />
-
-            {/* Driver Routes */}
-            <Route path="/driver/dashboard" element={<ProtectedRoute allowedRole="DRIVER"><DriverDashboard /></ProtectedRoute>} />
-            <Route path="/driver/requests" element={<ProtectedRoute allowedRole="DRIVER"><AvailableRequests /></ProtectedRoute>} />
-            <Route path="/driver/pool/:poolId" element={<ProtectedRoute allowedRole="DRIVER"><PoolDetails /></ProtectedRoute>} />
-            <Route path="/driver/history" element={<ProtectedRoute allowedRole="DRIVER"><DriverHistory /></ProtectedRoute>} />
-          </Routes>
-        </main>
-        <Toaster position="top-right" />
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
-    </AuthProvider>
-  </ThemeProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
