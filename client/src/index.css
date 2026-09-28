@@ -103,19 +103,38 @@
   gap: 0.5rem;
   width: 100%;
   height: 100%;
-  background: #090e1a;
   border-radius: 0.75rem;
   padding: 0.875rem 1.75rem;
   font-weight: 800;
   letter-spacing: 0.025em;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.btn-aura-emerald:hover .btn-aura-inner {
+/* Light Theme Aura Inner */
+html:not(.dark) .btn-aura-inner {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+html:not(.dark) .btn-aura-emerald:hover .btn-aura-inner {
+  background: #f0fdf4;
+}
+
+html:not(.dark) .btn-aura-red:hover .btn-aura-inner {
+  background: #fef2f2;
+}
+
+/* Dark Theme Aura Inner */
+html.dark .btn-aura-inner {
+  background: #090e1a;
+  color: #ffffff;
+}
+
+html.dark .btn-aura-emerald:hover .btn-aura-inner {
   background: #0d1627;
 }
 
-.btn-aura-red:hover .btn-aura-inner {
+html.dark .btn-aura-red:hover .btn-aura-inner {
   background: #170d14;
 }
 
