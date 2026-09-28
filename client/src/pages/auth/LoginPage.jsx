@@ -69,7 +69,7 @@ const LoginPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label-[0] htmlFor="email" className="sr-only">Email address</label-[0]>
+              <label htmlFor="email" className="sr-only">Email address</label>
               <input
                 id="email"
                 name="email"
@@ -82,7 +82,7 @@ const LoginPage = () => {
               />
             </div>
             <div>
-              <label-[0] htmlFor="password" className="sr-only">Password</label-[0]>
+              <label htmlFor="password" className="sr-only">Password</label>
               <input
                 id="password"
                 name="password"
