@@ -1,162 +1,205 @@
-/**
- * PoolDetails.jsx
- * Displays the current active pool and allows driver to update ride statuses.
- */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { User, MapPin, CheckCircle, Navigation, Play, Check } from 'lucide-react';
-import StatusBadge from '../../components/StatusBadge';
 import { formatFare } from '../../utils/helpers';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import StatusBadge from '../../components/StatusBadge';
+import { MapPin, Navigation, User, Users, CheckCircle, Play, Flag, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const PoolDetails = () => {
   const { poolId } = useParams();
   const navigate = useNavigate();
   const [pool, setPool] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
 
-  const fetchPool = async () => {
+  const fetchPoolDetails = async () => {
     try {
-      const response = await api.get(`/driver/pool/${poolId}`);
-      setPool(response.data);
+      const res = await api.get(`/driver/pool/${poolId}`);
+      setPool(res.data);
     } catch (error) {
-      toast.error('Failed to load pool');
-      navigate('/driver/dashboard');
+      toast.error('Failed to load pool details');
+      navigate('/driver');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPool();
-    const interval = setInterval(fetchPool, 5000); // Poll frequently during active trip
-    return () => clearInterval(interval);
+    fetchPoolDetails();
   }, [poolId]);
 
-  const updateRideStatus = async (rideId, action) => {
-    setUpdatingId(rideId);
+  const handleRideAction = async (rideId, action) => {
     try {
-      await api.patch(`/driver/ride/${rideId}/status`, { action });
-      toast.success('Status updated');
-      fetchPool();
+      setActionLoading(`${rideId}-${action}`);
+      await api.patch(`/driver/rides/${rideId}/${action}`);
+      toast.success(`Ride marked as ${action.replace('_', ' ')}`);
+      fetchPoolDetails(); // Refresh data
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update status');
+      toast.error(error.response?.data?.message || `Failed to update ride status`);
     } finally {
-      setUpdatingId(null);
+      setActionLoading(null);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (!pool) return null;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
+  if (!pool) return <div className="pt-20 text-center text-white">Pool not found</div>;
+
+  const totalSeats = 3;
+  const occupiedSeats = pool.rides?.reduce((acc, ride) => 
+    ['MATCHED', 'DRIVER_ARRIVED', 'IN_PROGRESS'].includes(ride.status) ? acc + ride.seats : acc
+  , 0) || 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Pool Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div className="bg-tesla-600 px-6 py-4 flex justify-between items-center text-white">
-          <h2 className="text-xl font-bold">Active Pool #{pool.id}</h2>
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-4xl mx-auto space-y-6">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={() => navigate('/driver')}
+            className="flex items-center text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" /> Back to Dashboard
+          </button>
           <StatusBadge status={pool.status} />
         </div>
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex-1 w-full bg-gray-50 rounded-lg p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-500 mb-1">Capacity</p>
-              <p className="text-2xl font-bold text-gray-900">{pool.occupiedSeats} / {pool.capacity}</p>
+
+        {/* Pool Overview Card */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 md:p-8">
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-6">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-2">Pool Management</h1>
+              <p className="text-gray-400">Manage your active passengers and route.</p>
             </div>
-            <div className="flex-1 w-full bg-gray-50 rounded-lg p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-500 mb-1">Total Passengers</p>
-              <p className="text-2xl font-bold text-gray-900">{pool.rides?.length || 0}</p>
+            
+            {/* Seat Visualization */}
+            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center gap-6">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Capacity</p>
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-gray-300" />
+                  <span className="text-xl font-bold text-white">{occupiedSeats} / {totalSeats}</span>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                {[...Array(totalSeats)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center border ${
+                      i < occupiedSeats 
+                        ? 'bg-green-500/20 border-green-500/50 text-green-400' 
+                        : 'bg-slate-800 border-slate-700 text-slate-600'
+                    }`}
+                  >
+                    <User className="w-5 h-5" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Passenger Manifest</h3>
+        {/* Passengers List */}
+        <div>
+          <h2 className="text-xl font-bold text-white mb-4">Passengers ({pool.rides?.length || 0})</h2>
+          
+          <div className="space-y-4">
+            {pool.rides?.length > 0 ? (
+              pool.rides.map((ride) => (
+                <div key={ride.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+                  <div className="p-5 md:p-6">
+                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                      
+                      {/* Passenger Info & Route */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-gray-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-white font-medium">{ride.passenger?.name || 'Passenger'}</h3>
+                              <p className="text-sm text-gray-400">{ride.seats} Seat{ride.seats > 1 ? 's' : ''}</p>
+                            </div>
+                          </div>
+                          <StatusBadge status={ride.status} />
+                        </div>
 
-      {/* Ride List */}
-      <div className="space-y-4">
-        {pool.rides?.map((ride) => (
-          <div key={ride.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div className="flex flex-col md:flex-row justify-between gap-4">
-              
-              {/* Info section */}
-              <div className="flex-1">
-                <div className="flex items-center mb-3">
-                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                    <User size={20} className="text-gray-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">{ride.passenger?.name}</h4>
-                    <div className="flex items-center space-x-2 mt-0.5">
-                      <StatusBadge status={ride.status} />
-                      <span className="text-xs text-gray-500">• {ride.seatsNeeded} seat(s)</span>
-                      <span className="text-xs font-semibold text-tesla-600">• {formatFare(ride.fare)}</span>
+                        <div className="flex items-start gap-4 bg-slate-800/30 p-4 rounded-xl">
+                          <div className="flex flex-col items-center mt-1">
+                            <MapPin className="w-4 h-4 text-green-400" />
+                            <div className="w-0.5 h-8 bg-slate-700 my-1"></div>
+                            <Navigation className="w-4 h-4 text-red-400" />
+                          </div>
+                          <div className="space-y-4 flex-1">
+                            <div>
+                              <p className="text-white text-sm">{ride.pickupLocation?.name}</p>
+                            </div>
+                            <div>
+                              <p className="text-white text-sm">{ride.dropoffLocation?.name}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500">Fare</p>
+                            <p className="text-lg font-bold text-green-400">{formatFare(ride.fare)}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col justify-center gap-3 md:w-48 border-t border-slate-800 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-6">
+                        {ride.status === 'MATCHED' && (
+                          <button
+                            onClick={() => handleRideAction(ride.id, 'arrive')}
+                            disabled={actionLoading === `${ride.id}-arrive`}
+                            className="w-full flex items-center justify-center gap-2 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-xl transition-all"
+                          >
+                            <CheckCircle className="w-4 h-4" /> Arrived
+                          </button>
+                        )}
+                        
+                        {ride.status === 'DRIVER_ARRIVED' && (
+                          <button
+                            onClick={() => handleRideAction(ride.id, 'start')}
+                            disabled={actionLoading === `${ride.id}-start`}
+                            className="w-full flex items-center justify-center gap-2 py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 rounded-xl transition-all"
+                          >
+                            <Play className="w-4 h-4" /> Start Trip
+                          </button>
+                        )}
+                        
+                        {ride.status === 'IN_PROGRESS' && (
+                          <button
+                            onClick={() => handleRideAction(ride.id, 'complete')}
+                            disabled={actionLoading === `${ride.id}-complete`}
+                            className="w-full flex items-center justify-center gap-2 py-3 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 rounded-xl transition-all"
+                          >
+                            <Flag className="w-4 h-4" /> Complete
+                          </button>
+                        )}
+
+                        {['COMPLETED', 'CANCELLED'].includes(ride.status) && (
+                          <div className="text-center py-3 text-gray-500 text-sm italic">
+                            No actions available
+                          </div>
+                        )}
+                      </div>
+                      
                     </div>
                   </div>
                 </div>
-
-                <div className="ml-13 space-y-2 mt-4 text-sm">
-                  <div className="flex items-center">
-                    <MapPin size={16} className="text-blue-500 mr-2" />
-                    <span className="text-gray-600">Pickup:</span>
-                    <span className="ml-1 font-medium">{ride.pickupLocation?.name}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin size={16} className="text-green-500 mr-2" />
-                    <span className="text-gray-600">Dropoff:</span>
-                    <span className="ml-1 font-medium">{ride.destinationLocation?.name}</span>
-                  </div>
-                </div>
+              ))
+            ) : (
+              <div className="text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                <p className="text-gray-400">No passengers in this pool yet.</p>
               </div>
-
-              {/* Actions section */}
-              <div className="flex flex-col justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-4 min-w-[150px]">
-                {ride.status === 'MATCHED' && (
-                  <button
-                    onClick={() => updateRideStatus(ride.id, 'mark_arrived')}
-                    disabled={updatingId === ride.id}
-                    className="w-full flex items-center justify-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-medium text-sm transition"
-                  >
-                    <Navigation size={16} className="mr-2" /> Mark Arrived
-                  </button>
-                )}
-                {ride.status === 'DRIVER_ARRIVED' && (
-                  <button
-                    onClick={() => updateRideStatus(ride.id, 'start_trip')}
-                    disabled={updatingId === ride.id}
-                    className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium text-sm transition"
-                  >
-                    <Play size={16} className="mr-2" /> Start Trip
-                  </button>
-                )}
-                {ride.status === 'IN_PROGRESS' && (
-                  <button
-                    onClick={() => updateRideStatus(ride.id, 'complete_trip')}
-                    disabled={updatingId === ride.id}
-                    className="w-full flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium text-sm transition"
-                  >
-                    <Check size={16} className="mr-2" /> Complete Trip
-                  </button>
-                )}
-                {['COMPLETED', 'CANCELLED'].includes(ride.status) && (
-                  <div className="text-center py-2 text-sm text-gray-500 font-medium flex items-center justify-center">
-                    <CheckCircle size={16} className="mr-1" /> Handled
-                  </div>
-                )}
-              </div>
-
-            </div>
+            )}
           </div>
-        ))}
-
-        {pool.rides?.length === 0 && (
-          <div className="text-center py-8 text-gray-500 bg-white rounded-xl border border-gray-200">
-            No passengers in this pool yet.
-          </div>
-        )}
+        </div>
+        
       </div>
     </div>
   );

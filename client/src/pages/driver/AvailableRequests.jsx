@@ -1,122 +1,150 @@
-/**
- * AvailableRequests.jsx
- * Shows pending ride requests that the driver can accept.
- */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { formatFare, formatDate } from '../../utils/helpers';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { User, MapPin, ArrowRight, Car } from 'lucide-react';
+import StatusBadge from '../../components/StatusBadge';
+import { MapPin, Navigation, Users, CheckCircle, Car } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const AvailableRequests = () => {
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [acceptingId, setAcceptingId] = useState(null);
   const navigate = useNavigate();
-
-  const fetchRequests = async () => {
-    try {
-      const response = await api.get('/driver/requests');
-      setRequests(response.data);
-    } catch (error) {
-      toast.error('Failed to fetch requests');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [requests, setRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [acceptingId, setAcceptingId] = useState(null);
 
   useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const res = await api.get('/driver/requests');
+        setRequests(res.data);
+      } catch (error) {
+        toast.error('Failed to load ride requests');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Poll every 10 seconds for new requests
     fetchRequests();
-    const interval = setInterval(fetchRequests, 10000); // Poll for new requests
-    return () => clearInterval(interval);
+    const intervalId = setInterval(fetchRequests, 10000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleAccept = async (rideId) => {
-    setAcceptingId(rideId);
     try {
-      const response = await api.post(`/driver/accept/${rideId}`);
-      toast.success('Ride accepted and added to your pool!');
-      // Navigate to the pool details
-      navigate(`/driver/pool/${response.data.poolId}`);
+      setAcceptingId(rideId);
+      const res = await api.post(`/driver/accept/${rideId}`);
+      toast.success('Ride accepted successfully!');
+      
+      // The response should include the pool ID
+      const poolId = res.data.poolId || res.data.id; 
+      if (poolId) {
+        navigate(`/driver/pool/${poolId}`);
+      } else {
+        // Fallback if poolId isn't directly returned
+        navigate('/driver');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to accept ride');
+      toast.error(error.response?.data?.message || 'Failed to accept ride. It may have been taken by another driver.');
+      // Remove the failed request from list
+      setRequests(prev => prev.filter(r => r.id !== rideId));
     } finally {
       setAcceptingId(null);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Available Requests</h1>
-          <p className="text-gray-600 text-sm mt-1">Accept rides to add them to your current pool.</p>
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+      <div className="max-w-4xl mx-auto">
+        
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Available Requests</h1>
+            <p className="text-gray-400">Accept ride requests to add passengers to your pool.</p>
+          </div>
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span className="text-sm text-gray-400">Live Updates</span>
+          </div>
         </div>
-        <button onClick={fetchRequests} className="text-tesla-600 hover:text-tesla-800 text-sm font-medium">
-          Refresh List
-        </button>
-      </div>
 
-      {requests.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <Car className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No pending requests</h3>
-          <p className="text-gray-500">Wait a moment for passengers to request rides.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {requests.map((ride) => (
-            <div key={ride.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
-              <div className="p-5">
+        {requests.length === 0 ? (
+          <div className="text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
+            <Car className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-white mb-2">No Requests Found</h3>
+            <p className="text-gray-400">There are currently no ride requests matching your criteria.</p>
+            <p className="text-sm text-gray-500 mt-2">The list will refresh automatically.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {requests.map((request) => (
+              <div 
+                key={request.id} 
+                className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 flex flex-col h-full hover:border-slate-700 transition-colors"
+              >
+                {/* Request Header */}
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3">
-                      <User size={16} />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{ride.passenger?.name}</p>
-                      <p className="text-xs text-gray-500">{formatDate(ride.createdAt)}</p>
-                    </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">{request.passenger?.name || 'Passenger'}</h3>
+                    <p className="text-sm text-gray-500">{formatDate(request.createdAt)}</p>
                   </div>
-                  <div className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold">
-                    {ride.seatsNeeded} Seat(s)
+                  <div className="flex items-center gap-1 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <span className="text-white text-sm font-medium">{request.seats}</span>
                   </div>
                 </div>
 
-                <div className="space-y-3 mb-5">
-                  <div className="flex items-start">
-                    <MapPin size={16} className="text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <p className="text-sm text-gray-700">{ride.pickupLocation?.name}</p>
-                  </div>
-                  <div className="pl-2 border-l-2 border-dashed border-gray-200 ml-1.5 h-4 my-1"></div>
-                  <div className="flex items-start">
-                    <MapPin size={16} className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <p className="text-sm text-gray-700">{ride.destinationLocation?.name}</p>
+                {/* Route */}
+                <div className="space-y-4 mb-6 flex-1">
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center mt-1">
+                      <MapPin className="w-5 h-5 text-green-400" />
+                      <div className="w-0.5 h-6 bg-slate-700 my-1"></div>
+                      <Navigation className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">Pickup</p>
+                        <p className="text-white font-medium">{request.pickupLocation?.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider">Dropoff</p>
+                        <p className="text-white font-medium">{request.dropoffLocation?.name}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="flex justify-between items-center border-t border-gray-100 pt-4">
+
+                {/* Footer / Action */}
+                <div className="border-t border-slate-800 pt-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-500">Est. Fare</p>
-                    <p className="font-semibold text-lg text-tesla-600">{formatFare(ride.fare)}</p>
+                    <p className="text-sm text-gray-500">Estimated Fare</p>
+                    <p className="text-xl font-bold text-green-400">{formatFare(request.fare)}</p>
                   </div>
+                  
                   <button
-                    onClick={() => handleAccept(ride.id)}
-                    disabled={acceptingId === ride.id}
-                    className="bg-tesla-600 hover:bg-tesla-700 text-white px-5 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50"
+                    onClick={() => handleAccept(request.id)}
+                    disabled={acceptingId === request.id}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-medium rounded-xl shadow-lg shadow-green-500/20 disabled:opacity-50 transition-all"
                   >
-                    {acceptingId === ride.id ? 'Accepting...' : 'Accept'}
+                    {acceptingId === request.id ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-5 h-5" /> Accept
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };
