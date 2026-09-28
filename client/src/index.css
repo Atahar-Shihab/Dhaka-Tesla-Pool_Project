@@ -160,6 +160,48 @@ html.dark .btn-aura-red:hover .btn-aura-inner {
   animation: road-scroll 0.25s linear infinite;
 }
 
+/* ============================================================ */
+/* GARIBOOK-STYLE CONTINUOUS HORIZONTAL RIDE ANIMATION          */
+/* ============================================================ */
+.garibook-rickshaw-transit {
+  animation: garibook-transit 12s linear infinite;
+  will-change: transform;
+}
+
+.garibook-rickshaw-bounce {
+  animation: rickshaw-micro-bounce 0.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.75));
+  will-change: transform;
+}
+
+@keyframes garibook-transit {
+  0% {
+    transform: translate3d(-120%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100vw, 0, 0);
+  }
+}
+
+@keyframes rickshaw-micro-bounce {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garibook-rickshaw-transit {
+    animation: none;
+    transform: translate3d(25vw, 0, 0);
+  }
+  .garibook-rickshaw-bounce {
+    animation: none;
+  }
+}
+
 @keyframes road-scroll {
   from {
     background-position: 0 0;
