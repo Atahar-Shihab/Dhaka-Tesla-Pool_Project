@@ -7,6 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 
@@ -25,9 +26,10 @@ import DriverHistory from './pages/driver/DriverHistory';
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
+    <ThemeProvider>
+      <AuthProvider>
+        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#090d16] text-slate-800 dark:text-slate-100 transition-colors duration-200">
+          <Navbar />
         <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
@@ -49,9 +51,10 @@ function App() {
           </Routes>
         </main>
         <Toaster position="top-right" />
-        <ToastContainer theme="dark" position="top-right" autoClose={3000} />
+        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       </div>
     </AuthProvider>
+  </ThemeProvider>
   );
 }
 
