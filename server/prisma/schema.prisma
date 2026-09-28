@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums defining the fixed options for specific fields
+enum Role {
+  PASSENGER
+  DRIVER
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PoolStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RideStatus {
+  REQUESTED
+  MATCHED
+  DRIVER_ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  TESLAPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+}
+
+// User model represents both passengers and drivers
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  vehicle      Vehicle? // A driver can have one vehicle
+  drivenPools  Pool[]        @relation("DriverPools")
+  rideRequests RideRequest[] @relation("PassengerRides")
+}
+
+// Vehicle model is linked to a driver
+model Vehicle {
+  id           String   @id @default(uuid()) @db.Uuid
+  driverId     String   @unique @db.Uuid
+  name         String
+  capacity     Int
+  model        String?
+  licensePlate String?
+  isActive     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  driver User   @relation(fields: [driverId], references: [id])
+  pools  Pool[]
+}
+
+// Location represents fixed pickup and drop-off points
+model Location {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String  @unique
+  latitude  Decimal
+  longitude Decimal
+
+  // Relationships
+  pickupRides  RideRequest[] @relation("PickupLocation")
+  dropoffRides RideRequest[] @relation("DropoffLocation")
+}
+
+// Pool represents a single trip started by a driver, which can have multiple passengers
+model Pool {
+  id            String     @id @default(uuid()) @db.Uuid
+  vehicleId     String     @db.Uuid
+  driverId      String     @db.Uuid
+  status        PoolStatus @default(OPEN)
+  occupiedSeats Int        @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relationships
+  vehicle      Vehicle       @relation(fields: [vehicleId], references: [id])
+  driver       User          @relation("DriverPools", fields: [driverId], references: [id])
+  rideRequests RideRequest[]
+
+  // Indexes to optimize database queries
+  @@index([driverId, vehicleId, status])
+}
+
+// RideRequest represents a passenger's request for a ride
+model RideRequest {
+  id                String     @id @default(uuid()) @db.Uuid
+  passengerId       String     @db.Uuid
+  pickupLocationId  String     @db.Uuid
+  dropoffLocationId String     @db.Uuid
+  seatsNeeded       Int        @default(1)
+  status            RideStatus @default(REQUESTED)
+  poolId            String?    @db.Uuid
+  fareAmount        Int? // total fare in poysha
+  baseFare          Int?
+  distanceCharge    Int?
+  poolDiscount      Int?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relationships
+  passenger       User      @relation("PassengerRides", fields: [passengerId], references: [id])
+  pickupLocation  Location  @relation("PickupLocation", fields: [pickupLocationId], references: [id])
+  dropoffLocation Location  @relation("DropoffLocation", fields: [dropoffLocationId], references: [id])
+  pool            Pool?     @relation(fields: [poolId], references: [id])
+  payment         Payment?
+
+  // Indexes for faster lookups
+  @@index([passengerId, poolId, status])
+}
+
+// Payment handles ride transactions
+model Payment {
+  id            String        @id @default(uuid()) @db.Uuid
+  rideRequestId String        @unique @db.Uuid
+  amount        Int // amount in poysha
+  method        PaymentMethod @default(CASH)
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  // Relationships
+  rideRequest RideRequest @relation(fields: [rideRequestId], references: [id])
+}
