@@ -88,22 +88,29 @@ const Navbar = () => {
             {/* Animated Sliding Theme Toggle */}
             <button
               type="button"
-              onClick={toggleTheme}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleTheme();
+                import('react-toastify').then(({ toast }) => {
+                  toast.success(!isDark ? 'Switched to Dark theme 🌙' : 'Switched to Light theme ☀️');
+                });
+              }}
               className="relative flex items-center justify-between p-1 w-16 h-8 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 transition-colors duration-200 cursor-pointer shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
               title={`Switch to ${isDark ? 'Light' : 'Dark'} theme`}
               aria-label="Toggle theme"
             >
-              <Sun className="w-3.5 h-3.5 ml-1 text-amber-500" />
-              <Moon className="w-3.5 h-3.5 mr-1 text-teal-400" />
+              <Sun className="w-3.5 h-3.5 ml-1 text-amber-500 pointer-events-none" />
+              <Moon className="w-3.5 h-3.5 mr-1 text-teal-400 pointer-events-none" />
               <div
-                className={`absolute top-0.5 w-7 h-7 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-transform duration-200 ease-in-out ${
+                className={`absolute top-0.5 w-7 h-7 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-transform duration-200 ease-in-out pointer-events-none ${
                   isDark ? 'translate-x-8 text-teal-400' : 'translate-x-0.5 text-amber-500'
                 }`}
               >
                 {isDark ? (
-                  <Moon className="w-3.5 h-3.5" />
+                  <Moon className="w-3.5 h-3.5 pointer-events-none" />
                 ) : (
-                  <Sun className="w-3.5 h-3.5" />
+                  <Sun className="w-3.5 h-3.5 pointer-events-none" />
                 )}
               </div>
             </button>
@@ -154,19 +161,26 @@ const Navbar = () => {
           <div className="flex md:hidden items-center gap-2">
             <button
               type="button"
-              onClick={toggleTheme}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleTheme();
+                import('react-toastify').then(({ toast }) => {
+                  toast.success(!isDark ? 'Switched to Dark theme 🌙' : 'Switched to Light theme ☀️');
+                });
+              }}
               className="relative flex items-center justify-between p-1 w-14 h-7 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 transition-colors duration-200 cursor-pointer shadow-inner focus:outline-none"
               title={`Switch to ${isDark ? 'Light' : 'Dark'} theme`}
               aria-label="Toggle theme"
             >
-              <Sun className="w-3 h-3 ml-0.5 text-amber-500" />
-              <Moon className="w-3 h-3 mr-0.5 text-teal-400" />
+              <Sun className="w-3 h-3 ml-0.5 text-amber-500 pointer-events-none" />
+              <Moon className="w-3 h-3 mr-0.5 text-teal-400 pointer-events-none" />
               <div
-                className={`absolute top-0.5 w-6 h-6 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-transform duration-200 ease-in-out ${
+                className={`absolute top-0.5 w-6 h-6 rounded-full bg-white dark:bg-slate-900 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-transform duration-200 ease-in-out pointer-events-none ${
                   isDark ? 'translate-x-7 text-teal-400' : 'translate-x-0.5 text-amber-500'
                 }`}
               >
-                {isDark ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />}
+                {isDark ? <Moon className="w-3 h-3 pointer-events-none" /> : <Sun className="w-3 h-3 pointer-events-none" />}
               </div>
             </button>
             <button
