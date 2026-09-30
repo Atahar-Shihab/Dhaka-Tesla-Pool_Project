@@ -263,12 +263,15 @@ cd server && npm test
 | GET | `/api/pools/active` | Yes | Get currently active pools |
 
 ## 🌐 Deployment
-- **URL:** DEPLOYMENT_URL_HERE
-- **Backend:** Render.com
-- **Frontend:** Vercel
-- **Database:** Neon (PostgreSQL)
+- **Live App:** [https://dhaka-tesla-pool-project.vercel.app](https://dhaka-tesla-pool-project.vercel.app)
+- **Backend API:** [https://dhaka-tesla-pool-api-j28j.onrender.com/api/health](https://dhaka-tesla-pool-api-j28j.onrender.com/api/health)
+- **Frontend:** Vercel (React/Vite static build)
+- **Backend:** Render.com (Node.js/Express Web Service)
+- **Database:** Render PostgreSQL (free tier)
 
-*(Alternatively, use the Docker-based deployment documented above for local hosting).*
+> **Note:** The backend runs on Render's free tier and may take ~30 seconds to wake up on first visit after inactivity.
+
+*(Alternatively, use the Docker-based deployment documented above for local hosting.)*
 
 ## ⚖️ Key Decisions & Trade-offs
 1. **PostgreSQL over MongoDB:** Relational data fits naturally, ACID transactions needed for seat locking.
