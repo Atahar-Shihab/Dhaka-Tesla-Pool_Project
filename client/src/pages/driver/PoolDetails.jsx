@@ -44,7 +44,7 @@ const PoolDetails = () => {
   };
 
   if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
-  if (!pool) return <div className="pt-20 text-center text-white">Pool not found</div>;
+  if (!pool) return <div className="pt-20 text-center text-slate-900 dark:text-white">Pool not found</div>;
 
   const rides = pool.rideRequests || pool.rides || [];
   const totalSeats = pool.vehicle?.capacity || 3;
@@ -53,14 +53,14 @@ const PoolDetails = () => {
   , 0);
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pt-24">
       <div className="max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button 
             onClick={() => navigate('/driver')}
-            className="flex items-center text-gray-400 hover:text-white transition-colors"
+            className="flex items-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-1" /> Back to Dashboard
           </button>
@@ -68,20 +68,20 @@ const PoolDetails = () => {
         </div>
 
         {/* Pool Overview Card */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 md:p-8">
+        <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8">
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-2">Pool Management</h1>
-              <p className="text-gray-400">Manage your active passengers and route.</p>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Pool Management</h1>
+              <p className="text-slate-600 dark:text-slate-400">Manage your active passengers and route.</p>
             </div>
             
             {/* Seat Visualization */}
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center gap-6">
+            <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center gap-6">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Capacity</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Capacity</p>
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-gray-300" />
-                  <span className="text-xl font-bold text-white">{occupiedSeats} / {totalSeats}</span>
+                  <span className="text-xl font-bold text-slate-900 dark:text-white">{occupiedSeats} / {totalSeats}</span>
                 </div>
               </div>
               
@@ -92,7 +92,7 @@ const PoolDetails = () => {
                     className={`w-10 h-10 rounded-lg flex items-center justify-center border ${
                       i < occupiedSeats 
                         ? 'bg-green-500/20 border-green-500/50 text-green-400' 
-                        : 'bg-slate-800 border-slate-700 text-slate-600'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-700 text-slate-600'
                     }`}
                   >
                     <User className="w-5 h-5" />
@@ -105,12 +105,12 @@ const PoolDetails = () => {
 
         {/* Passengers List */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">Passengers ({rides.length})</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Passengers ({rides.length})</h2>
           
           <div className="space-y-4">
             {rides.length > 0 ? (
               rides.map((ride) => (
-                <div key={ride.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+                <div key={ride.id} className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
                   <div className="p-5 md:p-6">
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                       
@@ -118,18 +118,18 @@ const PoolDetails = () => {
                       <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-                              <User className="w-5 h-5 text-gray-400" />
+                            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                             </div>
                             <div>
-                              <h3 className="text-white font-medium">{ride.passenger?.name || 'Passenger'}</h3>
-                              <p className="text-sm text-gray-400">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
+                              <h3 className="text-slate-900 dark:text-white font-medium">{ride.passenger?.name || 'Passenger'}</h3>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
                             </div>
                           </div>
                           <StatusBadge status={ride.status} />
                         </div>
 
-                        <div className="flex items-start gap-4 bg-slate-800/30 p-4 rounded-xl">
+                        <div className="flex items-start gap-4 bg-slate-100 dark:bg-slate-800/30 p-4 rounded-xl">
                           <div className="flex flex-col items-center mt-1">
                             <MapPin className="w-4 h-4 text-green-400" />
                             <div className="w-0.5 h-8 bg-slate-700 my-1"></div>
@@ -137,21 +137,21 @@ const PoolDetails = () => {
                           </div>
                           <div className="space-y-4 flex-1">
                             <div>
-                              <p className="text-white text-sm">{ride.pickupLocation?.name}</p>
+                              <p className="text-slate-900 dark:text-white text-sm">{ride.pickupLocation?.name}</p>
                             </div>
                             <div>
-                              <p className="text-white text-sm">{ride.dropoffLocation?.name}</p>
+                              <p className="text-slate-900 dark:text-white text-sm">{ride.dropoffLocation?.name}</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-gray-500">Fare</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Fare</p>
                             <p className="text-lg font-bold text-green-400">{formatFare(ride.fareAmount ?? ride.fare)}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex flex-col justify-center gap-3 md:w-48 border-t border-slate-800 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-6">
+                      <div className="flex flex-col justify-center gap-3 md:w-48 border-t border-slate-200 dark:border-slate-800 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-6">
                         {ride.status === 'MATCHED' && (
                           <button
                             onClick={() => handleRideAction(ride.id, 'arrive')}
@@ -183,7 +183,7 @@ const PoolDetails = () => {
                         )}
 
                         {['COMPLETED', 'CANCELLED'].includes(ride.status) && (
-                          <div className="text-center py-3 text-gray-500 text-sm italic">
+                          <div className="text-center py-3 text-slate-500 dark:text-slate-400 text-sm italic">
                             No actions available
                           </div>
                         )}
@@ -194,8 +194,8 @@ const PoolDetails = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center py-12 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                <p className="text-gray-400">No passengers in this pool yet.</p>
+              <div className="text-center py-12 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                <p className="text-slate-600 dark:text-slate-400">No passengers in this pool yet.</p>
               </div>
             )}
           </div>
@@ -207,3 +207,4 @@ const PoolDetails = () => {
 };
 
 export default PoolDetails;
+

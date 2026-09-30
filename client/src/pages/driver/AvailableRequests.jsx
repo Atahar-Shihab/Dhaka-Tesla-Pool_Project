@@ -58,43 +58,43 @@ const AvailableRequests = () => {
   if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pt-24">
       <div className="max-w-4xl mx-auto">
         
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Available Requests</h1>
-            <p className="text-gray-400">Accept ride requests to add passengers to your pool.</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Available Requests</h1>
+            <p className="text-slate-600 dark:text-slate-400">Accept ride requests to add passengers to your pool.</p>
           </div>
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-full">
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-sm text-gray-400">Live Updates</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Live Updates</span>
           </div>
         </div>
 
         {requests.length === 0 ? (
-          <div className="text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
+          <div className="text-center py-16 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <Car className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-white mb-2">No Requests Found</h3>
-            <p className="text-gray-400">There are currently no ride requests matching your criteria.</p>
-            <p className="text-sm text-gray-500 mt-2">The list will refresh automatically.</p>
+            <h3 className="text-xl font-medium text-slate-900 dark:text-white mb-2">No Requests Found</h3>
+            <p className="text-slate-600 dark:text-slate-400">There are currently no ride requests matching your criteria.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">The list will refresh automatically.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {requests.map((request) => (
               <div 
                 key={request.id} 
-                className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 flex flex-col h-full hover:border-slate-700 transition-colors"
+                className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col h-full hover:border-slate-700 transition-colors"
               >
                 {/* Request Header */}
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-white">{request.passenger?.name || 'Passenger'}</h3>
-                    <p className="text-sm text-gray-500">{formatDate(request.createdAt)}</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{request.passenger?.name || 'Passenger'}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{formatDate(request.createdAt)}</p>
                   </div>
-                  <div className="flex items-center gap-1 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <span className="text-white text-sm font-medium">{request.seatsNeeded ?? request.seats ?? 1} Seat{(request.seatsNeeded ?? request.seats ?? 1) > 1 ? 's' : ''}</span>
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    <Users className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    <span className="text-slate-900 dark:text-white text-sm font-medium">{request.seatsNeeded ?? request.seats ?? 1} Seat{(request.seatsNeeded ?? request.seats ?? 1) > 1 ? 's' : ''}</span>
                   </div>
                 </div>
 
@@ -108,28 +108,28 @@ const AvailableRequests = () => {
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider">Pickup</p>
-                        <p className="text-white font-medium">{request.pickupLocation?.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pickup</p>
+                        <p className="text-slate-900 dark:text-white font-medium">{request.pickupLocation?.name}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider">Dropoff</p>
-                        <p className="text-white font-medium">{request.dropoffLocation?.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dropoff</p>
+                        <p className="text-slate-900 dark:text-white font-medium">{request.dropoffLocation?.name}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Footer / Action */}
-                <div className="border-t border-slate-800 pt-4 flex items-center justify-between">
+                <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Estimated Fare</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Estimated Fare</p>
                     <p className="text-xl font-bold text-green-400">{formatFare(request.fareAmount ?? request.fare)}</p>
                   </div>
                   
                   <button
                     onClick={() => handleAccept(request.id)}
                     disabled={acceptingId === request.id}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-medium rounded-xl shadow-lg shadow-green-500/20 disabled:opacity-50 transition-all"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-slate-900 dark:text-white font-medium rounded-xl shadow-lg shadow-green-500/20 disabled:opacity-50 transition-all"
                   >
                     {acceptingId === request.id ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -151,3 +151,4 @@ const AvailableRequests = () => {
 };
 
 export default AvailableRequests;
+
