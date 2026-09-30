@@ -44,19 +44,19 @@ const RideDetails = () => {
   };
 
   if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
-  if (!ride) return <div className="pt-20 text-center text-gray-400">Ride not found</div>;
+  if (!ride) return <div className="pt-20 text-center text-slate-600 dark:text-slate-400">Ride not found</div>;
 
   const canCancel = ride.status === 'REQUESTED' || ride.status === 'MATCHED';
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pt-24">
       <div className="max-w-2xl mx-auto">
         
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <button 
             onClick={() => navigate('/passenger/rides')}
-            className="flex items-center text-gray-400 hover:text-white transition-colors"
+            className="flex items-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-1" /> Back
           </button>
@@ -64,59 +64,59 @@ const RideDetails = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-8">
+        <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 space-y-8">
           
           {/* Timeline / Route */}
           <div>
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Route Details</h2>
+            <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Route Details</h2>
             <div className="relative pl-6 space-y-6">
-              <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-slate-800"></div>
+              <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-slate-100 dark:bg-slate-800"></div>
               
               <div className="relative">
-                <div className="absolute -left-[27px] w-4 h-4 bg-slate-950 border-4 border-green-500 rounded-full"></div>
-                <h3 className="text-white font-medium">{ride.pickupLocation?.name}</h3>
-                <p className="text-sm text-gray-400 mt-1">{ride.pickupLocation?.address}</p>
+                <div className="absolute -left-[27px] w-4 h-4 bg-slate-50 dark:bg-slate-950 border-4 border-green-500 rounded-full"></div>
+                <h3 className="text-slate-900 dark:text-white font-medium">{ride.pickupLocation?.name}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{ride.pickupLocation?.address}</p>
               </div>
               
               <div className="relative">
-                <div className="absolute -left-[27px] w-4 h-4 bg-slate-950 border-4 border-red-500 rounded-full"></div>
-                <h3 className="text-white font-medium">{ride.dropoffLocation?.name}</h3>
-                <p className="text-sm text-gray-400 mt-1">{ride.dropoffLocation?.address}</p>
+                <div className="absolute -left-[27px] w-4 h-4 bg-slate-50 dark:bg-slate-950 border-4 border-red-500 rounded-full"></div>
+                <h3 className="text-slate-900 dark:text-white font-medium">{ride.dropoffLocation?.name}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{ride.dropoffLocation?.address}</p>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-800"></div>
+          <div className="border-t border-slate-200 dark:border-slate-800"></div>
 
           {/* Fare & Info */}
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Total Fare</p>
-              <p className="text-2xl font-bold text-white">{formatFare(ride.fareAmount ?? ride.fare)}</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Fare</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{formatFare(ride.fareAmount ?? ride.fare)}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Seats Booked</p>
-              <p className="text-lg text-white">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Seats Booked</p>
+              <p className="text-lg text-slate-900 dark:text-white">{ride.seatsNeeded ?? ride.seats ?? 1} Seat{(ride.seatsNeeded ?? ride.seats ?? 1) > 1 ? 's' : ''}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Date</p>
-              <p className="text-sm text-white">{formatDate(ride.createdAt)}</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Date</p>
+              <p className="text-sm text-slate-900 dark:text-white">{formatDate(ride.createdAt)}</p>
             </div>
           </div>
 
           {/* Driver Info if matched */}
           {ride.pool && ride.pool.driver && (
             <>
-              <div className="border-t border-slate-800"></div>
+              <div className="border-t border-slate-200 dark:border-slate-800"></div>
               <div>
-                <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Driver Details</h2>
-                <div className="flex items-center gap-4 bg-slate-800/30 p-4 rounded-xl border border-slate-800">
-                  <div className="p-3 bg-slate-800 rounded-full text-gray-400">
+                <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Driver Details</h2>
+                <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400">
                     <User className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-white font-medium">{ride.pool.driver.name}</p>
-                    <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
+                    <p className="text-slate-900 dark:text-white font-medium">{ride.pool.driver.name}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
                       <Car className="w-4 h-4" /> {ride.pool.vehicle?.name || ride.pool.vehicleModel || 'Tesla Bullet'} {ride.pool.vehicle?.licensePlate ? `(${ride.pool.vehicle.licensePlate})` : ''}
                     </p>
                   </div>
@@ -146,3 +146,4 @@ const RideDetails = () => {
 };
 
 export default RideDetails;
+

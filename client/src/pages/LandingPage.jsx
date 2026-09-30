@@ -37,9 +37,11 @@ import {
 import { toast } from 'react-toastify';
 import gsap from 'gsap';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const LandingPage = () => {
   const { theme, isDark } = useTheme();
+  const { user } = useAuth();
 
   // Interactive Fare Simulator state
   const [pickup, setPickup] = useState('Banani');
@@ -347,26 +349,41 @@ const LandingPage = () => {
 
               {/* Action Buttons with Aura Effect */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 mb-8">
-                <Link
-                  to="/register"
-                  className="btn-aura-emerald group cursor-pointer"
-                >
-                  <span className="btn-aura-inner text-base">
-                    <Zap className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-500 group-hover:scale-110 transition-transform" />
-                    <span>Ride as Passenger</span>
-                    <ArrowRight className="w-4 h-4 ml-1 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </Link>
+                {user ? (
+                  <Link
+                    to={user.role === 'DRIVER' ? '/driver/dashboard' : '/passenger/dashboard'}
+                    className="btn-aura-emerald group cursor-pointer"
+                  >
+                    <span className="btn-aura-inner text-base">
+                      <Zap className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-500 group-hover:scale-110 transition-transform" />
+                      <span>Open My Dashboard ({user.name})</span>
+                      <ArrowRight className="w-4 h-4 ml-1 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      to="/register"
+                      className="btn-aura-emerald group cursor-pointer"
+                    >
+                      <span className="btn-aura-inner text-base">
+                        <Zap className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-500 group-hover:scale-110 transition-transform" />
+                        <span>Ride as Passenger</span>
+                        <ArrowRight className="w-4 h-4 ml-1 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </Link>
 
-                <Link
-                  to="/login"
-                  className="btn-aura-red group cursor-pointer"
-                >
-                  <span className="btn-aura-inner text-base">
-                    <Car className="w-5 h-5 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />
-                    <span>Driver Portal (Jashim)</span>
-                  </span>
-                </Link>
+                    <Link
+                      to="/login"
+                      className="btn-aura-red group cursor-pointer"
+                    >
+                      <span className="btn-aura-inner text-base">
+                        <Car className="w-5 h-5 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />
+                        <span>Driver Portal (Jashim)</span>
+                      </span>
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Fast 1-Click Demo Login Pills for Recruiter */}
@@ -388,6 +405,13 @@ const LandingPage = () => {
                   >
                     <span>👨‍💻 Rafiq:</span>
                     <span className="text-teal-600 dark:text-cyan-400 font-semibold">rafiq@teslapool.com</span>
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs font-mono text-slate-700 dark:text-slate-300 shadow-sm transition-colors"
+                  >
+                    <span>🧕 Shirin:</span>
+                    <span className="text-purple-600 dark:text-purple-400 font-semibold">shirin@teslapool.com</span>
                   </Link>
                   <Link
                     to="/login"
@@ -515,15 +539,15 @@ const LandingPage = () => {
             </div>
 
             <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
-              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Verification</span>
+              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
+                <Clock className="w-4 h-4" />
+                <span className="text-[11px] font-mono uppercase tracking-wider font-bold">Speed</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
-                27 / 27
+                &lt; 1 min
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                Automated tests passing
+                Average matching time
               </p>
             </div>
           </div>
@@ -1130,15 +1154,24 @@ const LandingPage = () => {
             <div>
               <h4 className="text-white font-bold mb-5 uppercase tracking-widest text-xs">Platform</h4>
               <ul className="space-y-3 text-sm">
-                <li><Link to="/register" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Create Account</Link></li>
-                <li><Link to="/login" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Driver Login</Link></li>
+                {user ? (
+                  <>
+                    <li><Link to={user.role === 'DRIVER' ? '/driver/dashboard' : '/passenger/dashboard'} className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">My Dashboard</Link></li>
+                    <li><Link to={user.role === 'DRIVER' ? '/driver/history' : '/passenger/rides'} className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">My History</Link></li>
+                  </>
+                ) : (
+                  <>
+                    <li><Link to="/register" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Create Account</Link></li>
+                    <li><Link to="/login" className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Sign In</Link></li>
+                  </>
+                )}
                 <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all inline-block">Back to Top</button></li>
               </ul>
             </div>
 
             {/* Assessment Info */}
             <div>
-              <h4 className="text-white font-bold mb-5 uppercase tracking-widest text-xs">Evaluation Setup</h4>
+              <h4 className="text-white font-bold mb-5 uppercase tracking-widest text-xs">Platform</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-center gap-2 text-slate-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> PostgreSQL & Prisma
@@ -1149,13 +1182,7 @@ const LandingPage = () => {
                 <li className="flex items-center gap-2 text-slate-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> React & TailwindCSS
                 </li>
-                <li className="flex items-center gap-2 text-slate-400 mt-3 pt-3 border-t border-slate-800">
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <strong className="text-emerald-400 font-mono">27/27 Tests Passing</strong>
-                </li>
+                
               </ul>
             </div>
 
@@ -1175,3 +1202,6 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
+
+

@@ -49,6 +49,24 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Dev endpoint to clean previous test rides and pools for video walkthrough
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+app.post('/api/dev/reset-demo', async (req, res) => {
+  try {
+    await prisma.payment.deleteMany({});
+    await prisma.rideRequest.deleteMany({});
+    await prisma.pool.deleteMany({});
+    await prisma.vehicle.updateMany({
+      data: { isActive: true }
+    });
+    res.json({ success: true, message: 'All ride histories and pools have been reset.' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Register our feature-specific routes
 app.use('/api/auth', authRoutes);
 app.use('/api/locations', locationRoutes);

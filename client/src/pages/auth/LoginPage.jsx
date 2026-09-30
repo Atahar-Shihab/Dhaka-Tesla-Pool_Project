@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LogIn } from 'lucide-react';
@@ -6,7 +6,13 @@ import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
+  
+  useEffect(() => {
+    if (user) {
+      navigate(user.role === 'DRIVER' ? '/driver/dashboard' : '/passenger/dashboard');
+    }
+  }, [user, navigate]);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -22,8 +28,10 @@ const LoginPage = () => {
     }));
   };
 
-  // Demo fillers
+  // Demo fillers for all cast members
   const fillNusrat = () => setFormData({ email: 'nusrat@teslapool.com', password: 'password123' });
+  const fillRafiq = () => setFormData({ email: 'rafiq@teslapool.com', password: 'password123' });
+  const fillShirin = () => setFormData({ email: 'shirin@teslapool.com', password: 'password123' });
   const fillJashim = () => setFormData({ email: 'jashim@teslapool.com', password: 'password123' });
 
   // Handle form submission
@@ -110,20 +118,34 @@ const LoginPage = () => {
           {/* Demo Login Buttons */}
           <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
             <p className="text-xs text-center text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider font-mono">Demo Credentials</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={fillNusrat}
-                className="py-2 px-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-600 dark:text-emerald-400 text-sm font-medium transition-colors"
+                className="py-2 px-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-medium transition-colors text-center"
               >
-                Nusrat (Passenger)
+                👩‍💼 Nusrat (Passenger)
+              </button>
+              <button
+                type="button"
+                onClick={fillRafiq}
+                className="py-2 px-3 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 rounded-lg text-teal-600 dark:text-teal-400 text-xs sm:text-sm font-medium transition-colors text-center"
+              >
+                👨‍💻 Rafiq (Passenger)
+              </button>
+              <button
+                type="button"
+                onClick={fillShirin}
+                className="py-2 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg text-purple-600 dark:text-purple-400 text-xs sm:text-sm font-medium transition-colors text-center"
+              >
+                🧕 Shirin (Passenger)
               </button>
               <button
                 type="button"
                 onClick={fillJashim}
-                className="py-2 px-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm font-medium transition-colors"
+                className="py-2 px-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-xs sm:text-sm font-medium transition-colors text-center"
               >
-                Jashim (Driver)
+                🛺 Jashim (Driver)
               </button>
             </div>
           </div>

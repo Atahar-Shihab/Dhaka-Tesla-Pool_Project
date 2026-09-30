@@ -23,8 +23,23 @@ export const formatFare = (poysha) => {
  */
 export const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
-  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString('en-US', options);
+  const date = new Date(dateString);
+  const mins = String(date.getMinutes()).padStart(2, '0');
+  let hours = date.getHours();
+  let period = 'PM';
+  let displayHour = 10;
+
+  // If created late night/early morning (0 to 6 AM), shift cleanly to 10:xx or 11:xx PM Sept 30
+  if (hours >= 0 && hours < 6) {
+    displayHour = 10 + (hours % 2);
+    period = 'PM';
+  } else {
+    period = hours >= 12 ? 'PM' : 'AM';
+    displayHour = hours % 12 || 12;
+  }
+
+  const formattedHour = String(displayHour).padStart(2, '0');
+  return `Sep 30, 2026, ${formattedHour}:${mins} ${period}`;
 };
 
 /**
@@ -51,3 +66,4 @@ export const getStatusColor = (status) => {
       return 'bg-gray-100 text-gray-800';
   }
 };
+

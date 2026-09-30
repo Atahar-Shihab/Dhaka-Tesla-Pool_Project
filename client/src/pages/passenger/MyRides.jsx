@@ -41,12 +41,12 @@ const MyRides = () => {
   if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 pt-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pt-24">
       <div className="max-w-4xl mx-auto">
         
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">My Rides</h1>
-          <p className="text-gray-400">View and manage your ride history.</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">My Rides</h1>
+          <p className="text-slate-600 dark:text-slate-400">View and manage your ride history.</p>
         </div>
 
         {/* Filters */}
@@ -57,8 +57,8 @@ const MyRides = () => {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 filter === f 
-                  ? 'bg-slate-800 text-white border border-slate-600' 
-                  : 'bg-slate-900/50 text-gray-400 border border-slate-800 hover:bg-slate-800/80'
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-600' 
+                  : 'bg-white dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:bg-slate-800/80'
               }`}
             >
               {f.charAt(0) + f.slice(1).toLowerCase()}
@@ -73,7 +73,7 @@ const MyRides = () => {
               <Link 
                 key={ride.id} 
                 to={`/passenger/rides/${ride.id}`}
-                className="block bg-slate-900/50 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors"
+                className="block bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   
@@ -81,7 +81,7 @@ const MyRides = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <StatusBadge status={ride.status} />
-                      <span className="text-sm text-gray-500">{formatDate(ride.createdAt)}</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">{formatDate(ride.createdAt)}</span>
                     </div>
                     
                     <div className="space-y-2">
@@ -97,9 +97,9 @@ const MyRides = () => {
                   </div>
                   
                   {/* Fare & Chevron */}
-                  <div className="flex md:flex-col items-center md:items-end justify-between border-t border-slate-800 md:border-0 pt-4 md:pt-0 mt-2 md:mt-0">
-                    <div className="text-xl font-bold text-white mb-2">{formatFare(ride.fareAmount ?? ride.fare)}</div>
-                    <div className="text-gray-500 flex items-center text-sm group-hover:text-green-400">
+                  <div className="flex md:flex-col items-center md:items-end justify-between border-t border-slate-200 dark:border-slate-800 md:border-0 pt-4 md:pt-0 mt-2 md:mt-0">
+                    <div className="text-xl font-bold text-slate-900 dark:text-white mb-2">{formatFare(ride.fareAmount ?? ride.fare)}</div>
+                    <div className="text-slate-500 dark:text-slate-400 flex items-center text-sm group-hover:text-green-400">
                       View details <ChevronRight className="w-4 h-4 ml-1" />
                     </div>
                   </div>
@@ -108,10 +108,10 @@ const MyRides = () => {
               </Link>
             ))
           ) : (
-            <div className="text-center py-12 bg-slate-900/30 border border-slate-800 rounded-2xl">
-              <p className="text-gray-400 mb-4">No rides found in this category.</p>
+            <div className="text-center py-12 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-2xl">
+              <p className="text-slate-600 dark:text-slate-400 mb-4">No rides found in this category.</p>
               {filter === 'ALL' && (
-                <Link to="/passenger/request" className="inline-block px-6 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700">
+                <Link to="/passenger/request" className="inline-block px-6 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-slate-700">
                   Book a Ride
                 </Link>
               )}
@@ -125,3 +125,4 @@ const MyRides = () => {
 };
 
 export default MyRides;
+

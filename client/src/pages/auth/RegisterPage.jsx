@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { UserPlus } from 'lucide-react';
@@ -6,7 +6,13 @@ import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { user, register } = useAuth();
+  
+  useEffect(() => {
+    if (user) {
+      navigate(user.role === 'DRIVER' ? '/driver/dashboard' : '/passenger/dashboard');
+    }
+  }, [user, navigate]);
   
   const [formData, setFormData] = useState({
     name: '',
