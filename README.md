@@ -24,7 +24,7 @@ Dhaka traffic is legendary. This platform solves the problem by letting passenge
 - Responsive design (mobile + desktop)
 
 ## 🎬 Demo Video
-[**Watch the 6-minute project walkthrough →**](VIDEO_LINK_HERE)
+[**Watch the 6-minute project walkthrough →**](https://drive.google.com/file/d/1-UeIoMTwwxW5mlv9b6drfwWFiE8zDn3y/view?usp=sharing)
 
 ## 🏗️ Architecture Diagram
 ```mermaid
