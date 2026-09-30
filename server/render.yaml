@@ -1,0 +1,31 @@
+# Render Blueprint - Backend API + PostgreSQL Database
+# Deploy: Connect your GitHub repo on https://dashboard.render.com/blueprints
+# This file tells Render how to build and run the backend automatically.
+
+databases:
+  - name: dhaka-tesla-pool-db
+    plan: free
+    databaseName: dhaka_tesla_pool
+    user: dhaka_tesla_pool_user
+
+services:
+  - type: web
+    name: dhaka-tesla-pool-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && node prisma/seed.js
+    startCommand: node src/app.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dhaka-tesla-pool-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://dhaka-tesla-pool.vercel.app

@@ -24,10 +24,14 @@ const app = express();
 // ==========================================
 
 // Enable CORS (Cross-Origin Resource Sharing)
-// This allows our React frontend (running on different ports) to communicate with this backend.
+// This allows our React frontend (running on different ports/domains) to communicate with this backend.
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',')
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // Allow these frontend URLs
-  credentials: true, // Allow cookies if needed
+  origin: allowedOrigins,
+  credentials: true,
 }));
 
 // Parse incoming JSON requests and put the parsed data in req.body
