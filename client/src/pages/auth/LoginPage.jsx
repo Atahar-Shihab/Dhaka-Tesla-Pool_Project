@@ -41,9 +41,9 @@ const LoginPage = () => {
       
       // Redirect based on role
       if (user.role === 'DRIVER') {
-        navigate('/driver');
+        navigate('/driver/dashboard');
       } else {
-        navigate('/passenger');
+        navigate('/passenger/dashboard');
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed. Please check credentials.');
